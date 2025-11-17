@@ -33,5 +33,11 @@ data class VolumeInfo(
     @SerializedName("subtitle")
     var subtitle: String?,
     @SerializedName("title")
-    var title: String?
+    var title: String?,
+    @SerializedName("industryIdentifiers")
+    var industryIdentifiers: List<IndustryIdentifier>?,
+    @SerializedName("averageRating")
+    var averageRating: Float?,
+    @SerializedName("ratingsCount")
+    var ratingsCount: Int?
 )

@@ -1,6 +1,7 @@
 package com.depi.bookdiscovery.network
 
 import com.depi.bookdiscovery.dto.BooksResponse
+import com.depi.bookdiscovery.dto.OpenLibraryBook
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -11,7 +12,14 @@ interface APIService {
     suspend fun searchBooks(
         @Query("q") searchTerms: String,
         @Query("maxResults") maxResults: Int,
-        @Query("startIndex") startIndex: Int
+        @Query("startIndex") startIndex: Int,
+        @Query("orderBy") orderBy: String = "relevance",
     ): Response<BooksResponse>
 
+    @GET("api/books")
+    suspend fun getBookFromOpenLibrary(
+        @Query("bibkeys") bibkeys: String,
+        @Query("jscmd") jscmd: String,
+        @Query("format") format: String,
+    ): Response<Map<String, OpenLibraryBook>>
 }

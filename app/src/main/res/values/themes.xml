@@ -2,4 +2,10 @@
 <resources>
 
     <style name="Theme.BookDiscovery" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/LightPrimary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.BookDiscovery</item>
+    </style>
 </resources>
