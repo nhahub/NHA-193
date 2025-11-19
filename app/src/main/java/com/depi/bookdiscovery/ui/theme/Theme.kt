@@ -3,6 +3,7 @@ package com.depi.bookdiscovery.ui.theme
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -12,43 +13,66 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
+
+val ColorScheme.inputBackground: Color
+    @Composable
+    get() = if (isSystemInDarkTheme())
+        DarkInputBackground else LightInputBackground
+
+val ColorScheme.borderColor: Color
+    @Composable
+    get() = if (isSystemInDarkTheme())
+        DarkBorder else LightBorder
+
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0x00000000),
-    secondary = Color(0x00000000),
-    tertiary = Color(0x00000000),
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
+    primary = DarkPrimary,
+    onPrimary = DarkPrimaryForeground,
+    secondary = DarkSecondary,
+    onSecondary = DarkSecondaryForeground,
+    error = DarkDestructive,
+    onError = DarkDestructiveForeground,
+    background = DarkBackground,
+    onBackground = DarkForeground,
+    surface = DarkCard,
+    onSurface = DarkCardForeground,
+    surfaceVariant = DarkSurfaceVariant,
+    onSurfaceVariant = DarkOnSurfaceVariant,
+    outline = DarkOutline,
+    outlineVariant = DarkOutlineVariant,
+    scrim = DarkScrim,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
+    primary = LightPrimary,
+    onPrimary = LightPrimaryForeground,
+    secondary = LightSecondary,
+    onSecondary = LightSecondaryForeground,
+    error = LightDestructive,
+    onError = LightDestructiveForeground,
+    background = LightBackground,
+    onBackground = LightForeground,
+    surface = LightCard,
+    onSurface = LightCardForeground,
+    surfaceVariant = LightSurfaceVariant,
+    onSurfaceVariant = LightOnSurfaceVariant,
+    outline = LightOutline,
+    outlineVariant = LightOutlineVariant,
+    scrim = LightScrim,
+
 )
 
 @Composable
 fun BookDiscoveryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+
         }
 
         darkTheme -> DarkColorScheme
@@ -60,4 +84,6 @@ fun BookDiscoveryTheme(
         typography = Typography,
         content = content
     )
+
+
 }
