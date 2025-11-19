@@ -3,11 +3,14 @@ package com.depi.bookdiscovery.screens.main
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +20,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.rememberAsyncImagePainter
 import com.depi.bookdiscovery.R
+import com.depi.bookdiscovery.Screen
 import com.depi.bookdiscovery.ui.theme.YellowStar
 import com.depi.bookdiscovery.ui.viewmodel.MainViewModel
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModel
@@ -36,27 +42,47 @@ data class Book(
     val isbn: String?,
 )
 
-data class Category(
+data class MainCategory(
     val name: String,
 )
 
 @Composable
 fun MainScreen(
+    navController: NavController,
     settingsViewModel: SettingsViewModel,
     mainViewModel: MainViewModel,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit
 ) {
     val categories = listOf(
-        Category("All"),
-        Category("Fiction"),
-        Category("Technology"),
-        Category("Science")
+        MainCategory("All"),
+        MainCategory("Fiction"),
+        MainCategory("Technology"),
+        MainCategory("Science")
     )
     var selectedCategory by remember { mutableStateOf(categories.first()) }
-
     val featuredBooksState by mainViewModel.featuredBooksState.collectAsStateWithLifecycle()
     val popularBooksState by mainViewModel.popularBooksState.collectAsStateWithLifecycle()
     val newReleasesState by mainViewModel.newReleasesState.collectAsStateWithLifecycle()
 
+    fun filterBooks(state: UiState<List<Book>>): UiState<List<Book>> {
+        return when (state) {
+            is UiState.Success -> {
+                val filtered = state.data.filter { book ->
+                    searchQuery.isBlank() ||
+                            book.title?.contains(searchQuery, ignoreCase = true) == true ||
+                            book.author.contains(searchQuery, ignoreCase = true)
+                }
+                UiState.Success(filtered)
+            }
+
+            else -> state
+        }
+    }
+
+    val filteredFeatured = filterBooks(featuredBooksState)
+    val filteredPopular = filterBooks(popularBooksState)
+    val filteredNewReleases = filterBooks(newReleasesState)
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -73,6 +99,24 @@ fun MainScreen(
             )
         }
         item {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                label = { Text("Search for a book...") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search Icon"
+                    )
+                },
+                singleLine = true
+            )
+        }
+
+        item {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -80,7 +124,19 @@ fun MainScreen(
                 items(categories) { category ->
                     FilterChip(
                         selected = category == selectedCategory,
-                        onClick = { selectedCategory = category },
+                        onClick = {
+                            if (category.name != "All") {
+                                navController.navigate(Screen.Categories.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            } else {
+                                selectedCategory = category
+                            }
+                        },
                         label = { Text(category.name) }
                     )
                 }
@@ -98,7 +154,7 @@ fun MainScreen(
         }
         item {
             BookSection(
-                state = featuredBooksState,
+                state = filteredFeatured,
                 placeholder = { FeaturedBookCardPlaceholder() }
             ) { book ->
                 FeaturedBookCard(book = book)
@@ -116,7 +172,7 @@ fun MainScreen(
         }
         item {
             BookSection(
-                state = popularBooksState,
+                state = filteredPopular,
                 placeholder = { PopularBookCardPlaceholder() }
             ) { book ->
                 PopularBookCard(book = book)
@@ -136,7 +192,7 @@ fun MainScreen(
         }
         item {
             BookSection(
-                state = newReleasesState,
+                state = filteredNewReleases,
                 placeholder = { NewReleaseBookCardPlaceholder() }
             ) { book ->
                 NewReleaseBookCard(book = book)
@@ -221,7 +277,7 @@ fun FeaturedBookCard(book: Book) {
 @Composable
 fun PopularBookCard(book: Book) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.width(300.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -330,8 +386,8 @@ fun PopularBookCardPlaceholder() {
     Box(modifier = Modifier.shimmer()) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
+             .width(300.dp)
+            .height(150.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.Gray)
         ) {

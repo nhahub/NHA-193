@@ -15,14 +15,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,7 +40,6 @@ import com.depi.bookdiscovery.ui.viewmodel.MainViewModelFactory
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModel
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModelFactory
 import com.depi.bookdiscovery.repo.Repo
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +55,10 @@ fun MainAppScreen(
         factory = MainViewModelFactory(context, Repo())
     )
     val navController = rememberNavController()
+    
+    // Hoisted state for search query to fix keyboard issue
+    var searchQuery by remember { mutableStateOf("") }
+
     Scaffold(
         bottomBar = {
             NavigationBar(
@@ -128,7 +132,13 @@ fun MainAppScreen(
             Modifier.padding(innerPadding)
         ) {
             composable(Screen.Main.route) {
-                MainScreen(settingsViewModel, mainViewModel)
+                MainScreen(
+                    navController = navController, 
+                    settingsViewModel = settingsViewModel, 
+                    mainViewModel = mainViewModel,
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = { searchQuery = it }
+                )
             }
             composable(Screen.SearchScreenRoute.route) {
                 val context = androidx.compose.ui.platform.LocalContext.current
@@ -164,6 +174,6 @@ fun getScreenTitleResId(screen: Screen): Int {
         Screen.UserBooks -> R.string.nav_my_books
         Screen.Categories -> R.string.nav_categories
         Screen.Profile -> R.string.nav_profile
-        else -> R.string.app_name // Fallback or handle other screens
+        else -> R.string.app_name 
     }
 }
