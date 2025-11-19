@@ -1,7 +1,6 @@
 package com.depi.bookdiscovery
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.depi.bookdiscovery.util.SettingsDataStore
@@ -21,7 +20,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel(
     private val context: Context,
     private val repo: RepoService = Repo(),
-    private val settingsDataStore: SettingsDataStore
+    private val settingsDataStore: SettingsDataStore,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<List<Item>>>(UiState.Idle)
     val uiState = _uiState.asStateFlow()
@@ -60,6 +59,21 @@ class SearchViewModel(
         }
     }
 
+    fun searchByCategory(category: String) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
+            val query = "subject:$category"
+            currentQuery = query
+            startIndex = 0
+            _uiState.value = UiState.Loading
+            if (NetworkUtils.isInternetAvailable(context)) {
+                fetchBooks()
+            } else {
+                _uiState.value = UiState.Error("No internet connection")
+            }
+        }
+    }
+
     fun searchNow(query: String, printType: String, ebookFilter: String) {
         search(query, printType, ebookFilter, 0)
     }
@@ -79,7 +93,7 @@ class SearchViewModel(
         }
     }
 
-    fun clearOldSearch(){
+    fun clearOldSearch() {
         _uiState.value = UiState.Idle
     }
 
@@ -100,7 +114,8 @@ class SearchViewModel(
                 _uiState.value = UiState.Success(currentBooks + newBooks)
                 startIndex += newBooks.size
             } else {
-                _uiState.value = UiState.Error("Something went wrong: ${response.errorBody()?.string()}")
+                _uiState.value =
+                    UiState.Error("Something went wrong: ${response.errorBody()?.string()}")
             }
         } catch (e: Exception) {
             _uiState.value = UiState.Error("Something went wrong: ${e.message}")

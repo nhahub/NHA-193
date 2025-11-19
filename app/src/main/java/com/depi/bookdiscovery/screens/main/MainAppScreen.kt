@@ -20,9 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,7 +37,6 @@ import com.depi.bookdiscovery.ui.viewmodel.MainViewModelFactory
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModel
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModelFactory
 import com.depi.bookdiscovery.repo.Repo
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -144,7 +141,7 @@ fun MainAppScreen(
                 UserBooksScreen()
             }
             composable(Screen.Categories.route) {
-                CategoriesScreen()
+                CategoriesScreen(mainNavController)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(
