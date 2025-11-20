@@ -42,5 +42,9 @@ data class VolumeInfo(
     @SerializedName("averageRating")
     var averageRating: Float?,
     @SerializedName("ratingsCount")
-    var ratingsCount: Int?
+    var ratingsCount: Int?,
+    @SerializedName("pageCount")
+    var pageCount: Int?,
+    @SerializedName("categories")
+    var categories: List<String?>?
 ) : Parcelable

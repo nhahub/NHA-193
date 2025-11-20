@@ -2,6 +2,7 @@ package com.depi.bookdiscovery.screens.main
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -31,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.depi.bookdiscovery.R
 import com.depi.bookdiscovery.Screen
+import com.depi.bookdiscovery.repo.Repo
 import com.depi.bookdiscovery.screens.category.CategoriesScreen
 import com.depi.bookdiscovery.screens.profile.ProfileScreen
 import com.depi.bookdiscovery.screens.search.SearchScreen
@@ -39,7 +41,6 @@ import com.depi.bookdiscovery.ui.viewmodel.MainViewModel
 import com.depi.bookdiscovery.ui.viewmodel.MainViewModelFactory
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModel
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModelFactory
-import com.depi.bookdiscovery.repo.Repo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,7 +56,7 @@ fun MainAppScreen(
         factory = MainViewModelFactory(context, Repo())
     )
     val navController = rememberNavController()
-    
+
     // Hoisted state for search query to fix keyboard issue
     var searchQuery by remember { mutableStateOf("") }
 
@@ -91,7 +92,7 @@ fun MainAppScreen(
                                 )
 
                                 Screen.Categories -> Icon(
-                                    painterResource(id = R.drawable.ic_categories),
+                                    imageVector = Icons.Default.GridOn,
                                     contentDescription = "Categories"
                                 )
 
@@ -133,8 +134,8 @@ fun MainAppScreen(
         ) {
             composable(Screen.Main.route) {
                 MainScreen(
-                    navController = navController, 
-                    settingsViewModel = settingsViewModel, 
+                    navController = mainNavController,
+                    settingsViewModel = settingsViewModel,
                     mainViewModel = mainViewModel,
                     searchQuery = searchQuery,
                     onSearchQueryChange = { searchQuery = it }
@@ -151,7 +152,7 @@ fun MainAppScreen(
                 SearchScreen(mainNavController, searchViewModel)
             }
             composable(Screen.UserBooks.route) {
-                UserBooksScreen()
+                UserBooksScreen(mainNavController)
             }
             composable(Screen.Categories.route) {
                 CategoriesScreen(mainNavController)
@@ -174,6 +175,6 @@ fun getScreenTitleResId(screen: Screen): Int {
         Screen.UserBooks -> R.string.nav_my_books
         Screen.Categories -> R.string.nav_categories
         Screen.Profile -> R.string.nav_profile
-        else -> R.string.app_name 
+        else -> R.string.app_name
     }
 }

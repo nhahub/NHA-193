@@ -23,184 +23,51 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.depi.bookdiscovery.Screen
+import com.depi.bookdiscovery.database.BookDiscoveryDatabase
+import com.depi.bookdiscovery.database.entities.UserBook
+import com.depi.bookdiscovery.dto.Item
+import com.depi.bookdiscovery.dto.VolumeInfo
+import com.depi.bookdiscovery.dto.ImageLinks
 import com.depi.bookdiscovery.ui.viewmodel.UiState
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-
-// 1. Data Class
-data class Book(
-    val title: String,
-    val author: String,
-    val rating: Double,
-    val category: String,
-    val imageUrl: String,
-    val status: String,
-    val isFavorite: Boolean = false
-)
-
-// 2. ViewModel
-class UserBooksViewModel : ViewModel() {
-
-    private var allBooks = listOf<Book>()
-    private val _uiState = MutableStateFlow<UiState<List<Book>>>(UiState.Loading)
-    val uiState = _uiState.asStateFlow()
-
-    private val _searchText = MutableStateFlow("")
-    val searchText = _searchText.asStateFlow()
-
-    private val _selectedTabIndex = MutableStateFlow(0)
-    val selectedTabIndex = _selectedTabIndex.asStateFlow()
-
-    private val _favoritesCount = MutableStateFlow(0)
-    val favoritesCount = _favoritesCount.asStateFlow()
-
-    private var isShowingFavorites = false
-
-    private val tabs = listOf("Want to Read", "Currently Reading", "Finished")
-
-    init {
-        loadBooks()
-    }
-
-    fun toggleFavorite(book: Book) {
-        allBooks = allBooks.map { currentBook ->
-            if (currentBook.title == book.title) {
-                currentBook.copy(isFavorite = !currentBook.isFavorite)
-            } else {
-                currentBook
-            }
-        }
-        updateFavoritesCount()
-        filterBooks()
-    }
-
-    fun showFavorites() {
-        isShowingFavorites = true
-        _selectedTabIndex.value = -1
-        filterBooks()
-    }
-
-    private fun loadBooks() {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
-            delay(1000)
-
-            allBooks = listOf(
-                Book(
-                    "Modern JavaScript",
-                    "Alex Chen",
-                    4.6,
-                    "Technology",
-                    "https://m.media-amazon.com/images/I/71pL+3Q8L+L._SY522_.jpg",
-                    "Currently Reading",
-                    true
-                ),
-                Book(
-                    "Clean Code",
-                    "Robert C. Martin",
-                    4.8,
-                    "Programming",
-                    "https://m.media-amazon.com/images/I/41xShlnTZTL._SX218_BO1,204,203,200_QL40_FMwebp_.jpg",
-                    "Finished",
-                    true
-                ),
-                Book(
-                    "Atomic Habits",
-                    "James Clear",
-                    4.9,
-                    "Self Help",
-                    "https://m.media-amazon.com/images/I/81wgcld4wxL._SY522_.jpg",
-                    "Want to Read",
-                    false
-                ),
-                Book(
-                    "Rich Dad Poor Dad",
-                    "Robert Kiyosaki",
-                    4.7,
-                    "Finance",
-                    "https://m.media-amazon.com/images/I/81bsw6fnUiL._SY522_.jpg",
-                    "Finished",
-                    true
-                ),
-                Book(
-                    "Harry Potter",
-                    "J.K. Rowling",
-                    4.9,
-                    "Fiction",
-                    "https://m.media-amazon.com/images/I/81q77Q39nEL._SY522_.jpg",
-                    "Want to Read",
-                    false
-                )
-            )
-
-            updateFavoritesCount()
-            filterBooks()
-        }
-    }
-
-    fun onSearchQueryChanged(query: String) {
-        _searchText.value = query
-        filterBooks()
-    }
-
-    fun onTabSelected(index: Int) {
-        isShowingFavorites = false
-        _selectedTabIndex.value = index
-        filterBooks()
-    }
-
-    private fun filterBooks() {
-        val query = _searchText.value
-
-        val filteredList = allBooks.filter { book ->
-            val matchesSearch =
-                book.title.contains(query, ignoreCase = true) || book.author.contains(
-                    query,
-                    ignoreCase = true
-                )
-
-            val matchesCriteria = if (isShowingFavorites) {
-                book.isFavorite
-            } else {
-                if (_selectedTabIndex.value in tabs.indices) {
-                    book.status == tabs[_selectedTabIndex.value]
-                } else {
-                    true
-                }
-            }
-            matchesSearch && matchesCriteria
-        }
-        _uiState.value = UiState.Success(filteredList)
-    }
-
-    private fun updateFavoritesCount() {
-        _favoritesCount.value = allBooks.count { it.isFavorite }
-    }
-}
 
 // 3. Screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserBooksScreen(
-    viewModel: UserBooksViewModel = viewModel(),
-    onBookClick: () -> Unit = {}
+    navController: NavController
 ) {
+    val context = LocalContext.current
+    val database = remember { BookDiscoveryDatabase.getDatabase(context) }
+    val viewModel: UserBooksViewModel = viewModel(
+        factory = UserBooksViewModelFactory(database)
+    )
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
     val favCount by viewModel.favoritesCount.collectAsStateWithLifecycle()
+    val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
+
+    // Show error snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let { message ->
+            snackbarHostState.showSnackbar(message)
+            viewModel.clearError()
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("My Books", fontWeight = FontWeight.Bold) },
@@ -257,7 +124,15 @@ fun UserBooksScreen(
                     } else {
                         BooksList(
                             books = state.data,
-                            onItemClick = { /* Handle click */ },
+                            onItemClick = { userBook ->
+                                // Convert UserBook to Item for navigation
+                                val item = convertUserBookToItem(userBook)
+                                navController.currentBackStackEntry?.savedStateHandle?.set(
+                                    "book",
+                                    item
+                                )
+                                navController.navigate(Screen.BookDetailsScreenRoute.route)
+                            },
                             onFavClick = { book -> viewModel.toggleFavorite(book) }
                         )
                     }
@@ -273,6 +148,43 @@ fun UserBooksScreen(
             }
         }
     }
+}
+
+// Helper function to convert UserBook to Item for navigation
+fun convertUserBookToItem(userBook: UserBook): Item {
+    return Item(
+        id = userBook.bookId,
+        volumeInfo = VolumeInfo(
+            allowAnonLogging = null,
+            title = userBook.title,
+            authors = userBook.authors.split(", "),
+            description = userBook.description,
+            publisher = userBook.publisher,
+            publishedDate = userBook.publishedDate,
+            pageCount = userBook.pageCount,
+            categories = userBook.categories?.split(", "),
+            averageRating = userBook.averageRating,
+            ratingsCount = userBook.ratingsCount,
+            imageLinks = userBook.thumbnailUrl?.let {
+                ImageLinks(smallThumbnail = it, thumbnail = it)
+            },
+            previewLink = null,
+            infoLink = null,
+            canonicalVolumeLink = null,
+            contentVersion = null,
+            maturityRating = null,
+            panelizationSummary = null,
+            readingModes = null,
+            subtitle = null,
+            industryIdentifiers = null
+        ),
+        accessInfo = null,
+        etag = null,
+        kind = null,
+        saleInfo = null,
+        searchInfo = null,
+        selfLink = null
+    )
 }
 
 @Composable
@@ -342,19 +254,23 @@ fun StatusTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
 }
 
 @Composable
-fun BooksList(books: List<Book>, onItemClick: (Book) -> Unit, onFavClick: (Book) -> Unit) {
+fun BooksList(
+    books: List<UserBook>,
+    onItemClick: (UserBook) -> Unit,
+    onFavClick: (UserBook) -> Unit
+) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 80.dp)
     ) {
-        items(books) { book ->
+        items(books, key = { it.id }) { book ->
             BookItemCard(book, onItemClick, onFavClick)
         }
     }
 }
 
 @Composable
-fun BookItemCard(book: Book, onClick: (Book) -> Unit, onFavClick: (Book) -> Unit) {
+fun BookItemCard(book: UserBook, onClick: (UserBook) -> Unit, onFavClick: (UserBook) -> Unit) {
     Card(
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(2.dp),
@@ -367,7 +283,7 @@ fun BookItemCard(book: Book, onClick: (Book) -> Unit, onFavClick: (Book) -> Unit
         Row(modifier = Modifier.padding(12.dp)) {
             Card(shape = RoundedCornerShape(8.dp), modifier = Modifier.size(80.dp, 100.dp)) {
                 AsyncImage(
-                    model = book.imageUrl,
+                    model = book.thumbnailUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
@@ -395,32 +311,36 @@ fun BookItemCard(book: Book, onClick: (Book) -> Unit, onFavClick: (Book) -> Unit
                     }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(book.author, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                Text(book.authors, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFC107),
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text(
-                        book.rating.toString(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = RoundedCornerShape(4.dp)
-                    ) {
-                        Text(
-                            book.category,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                    book.averageRating?.let { rating ->
+                        Icon(
+                            Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFC107),
+                            modifier = Modifier.size(18.dp)
                         )
+                        Text(
+                            rating.toString(),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+                    book.categories?.let { category ->
+                        Surface(
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(
+                                category.split(",").firstOrNull() ?: category,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
                     }
                 }
             }
