@@ -103,7 +103,7 @@ class SearchViewModel(
 
     private suspend fun fetchBooks(isNewSearch: Boolean = true) {
         try {
-            val response = repo.searchBooks(currentQuery, maxResults, startIndex)
+            val response = repo.searchBooks(currentQuery, maxResults, startIndex, "newest")
             if (response.isSuccessful) {
                 val newBooks = response.body()?.items ?: emptyList()
                 val currentBooks = if (_uiState.value is UiState.Success && !isNewSearch) {
