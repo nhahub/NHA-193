@@ -1,0 +1,8 @@
+I have found and fixed the issue.
+
+You were exactly right that the problem was with the "drawing". The composable functions responsible for drawing the book cards (`FeaturedBookCard`, `PopularBookCard`, and `NewReleaseBookCard`) were empty.
+
+I have now implemented the UI for these three components. They will now correctly display the book's cover image, title, and author.
+
+Please run the app again. The book lists should now appear correctly.
+Modified file: app/src/main/java/com/depi/bookdiscovery/screens/main/MainScreen.kt
