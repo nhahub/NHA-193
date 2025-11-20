@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Book Discovery"
 include(":app")
- 

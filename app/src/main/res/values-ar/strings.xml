@@ -1,0 +1,97 @@
+<resources>
+    <string name="app_name">اكتشاف الكتب</string>
+    <string name="login_email_hint">البريد الإلكتروني</string>
+    <string name="login_password_hint">كلمة المرور</string>
+    <string name="login_button_text">تسجيل الدخول</string>
+    <string name="login_forgot_password">هل نسيت كلمة المرور؟</string>
+    <string name="login_signup_text">ليس لديك حساب؟ سجل الان</string>
+
+    <string name="signup_username_hint">اسم المستخدم</string>
+    <string name="signup_email_hint">البريد الإلكتروني</string>
+    <string name="signup_password_hint">كلمة المرور</string>
+    <string name="signup_confirm_password_hint">تأكيد كلمة المرور</string>
+    <string name="signup_button_text">إنشاء حساب</string>
+    <string name="signup_login_text">لديك حساب بالفعل؟ تسجيل الدخول</string>
+
+    <string name="search_recent_searches">عمليات البحث الأخيرة</string>
+    <string name="search_trending">الشائع</string>
+    <string name="search_clear_all">مسح الكل</string>
+
+    <string name="main_continue_reading">متابعة القراءة</string>
+    <string name="main_bestsellers">الأكثر مبيعًا</string>
+    <string name="main_new_releases">الإصدارات الجديدة</string>
+
+    <string name="main_featured_books">كتب مميزة</string>
+    <string name="main_popular_books">كتب رائجة</string>
+
+
+    <string name="categories_title">الفئات</string>
+
+    <string name="user_books_title">مكتبتي</string>
+
+    <string name="profile_title">الملف الشخصي</string>
+    <string name="profile_logout">تسجيل الخروج</string>
+    <string name="profile_my_books">كتبي</string>
+    <string name="profile_settings">الإعدادات</string>
+    <string name="profile_dark_mode">الوضع الداكن</string>
+    <string name="profile_language">اللغة</string>
+
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_search">بحث</string>
+    <string name="nav_categories">الفئات</string>
+    <string name="nav_my_books">كتبي</string>
+    <string name="nav_profile">الملف الشخصي</string>
+    <string name="search_bar">ابحث في الكتب</string>
+
+    <string name="profile_edit">تعديل</string>
+    <string name="profile_book_enthusiast">عاشق الكتب</string>
+    <string name="profile_member_since">عضو منذ يناير 2024</string>
+    <string name="profile_reading_statistics">إحصائيات القراءة</string>
+    <string name="profile_books_read">كتب مقروءة</string>
+    <string name="profile_currently_reading">تقرأ حاليا</string>
+    <string name="profile_favorites">المفضلة</string>
+    <string name="profile_avg_rating">متوسط التقييم</string>
+    <string name="profile_reading_goal">هدف القراءة لعام 2024</string>
+    <string name="profile_complete">%d%% اكتمل</string>
+    <string name="profile_quick_settings">إعدادات سريعة</string>
+    <string name="profile_recent_activity">النشاط الأخير</string>
+    <string name="profile_started_reading">بدأ قراءة \"%s\"</string>
+    <string name="profile_added_to_favorites">أضاف \"%s\" إلى المفضلة</string>
+    <string name="profile_completed">أكمل \"%s\"</string>
+    <string name="profile_hours_ago">منذ %d ساعة</string>
+    <string name="profile_days_ago">منذ %d يوم</string>
+
+    <string name="book_count">%d كتب</string>
+    <string name="category_fantasy">خيال</string>
+    <string name="category_science_fiction">خيال علمي</string>
+    <string name="category_mystery">غموض</string>
+    <string name="category_thriller">إثارة</string>
+    <string name="category_romance">رومانسي</string>
+    <string name="category_westerns">غربي</string>
+    <string name="category_dystopian">ديستوبيا</string>
+    <string name="category_contemporary">معاصر</string>
+    <string name="category_biography">سيرة ذاتية</string>
+    <string name="category_history">تاريخ</string>
+    <string name="category_self_help">مساعدة ذاتية</string>
+    <string name="category_business">أعمال</string>
+    <string name="category_cooking">طبخ</string>
+    <string name="category_art">فن</string>
+    <string name="category_poetry">شعر</string>
+    <string name="category_travel">سفر</string>
+
+    <string name="user_books_currently_reading">أقرأ حاليا</string>
+    <string name="user_books_finished">انتهيت</string>
+    <string name="user_books_my_favorites">مفضلاتي</string>
+    <string name="search_title">بحث</string>
+
+    <string name="search_filter_by_print_type">التصفية حسب نوع الطباعة</string>
+    <string name="search_filter_by_ebook_type">التصفية حسب نوع الكتاب الإلكتروني</string>
+    <string name="search_filter_all">الكل</string>
+    <string name="search_filter_books">كتب</string>
+    <string name="search_filter_magazines">مجلات</string>
+    <string name="search_filter_free_ebooks">كتب إلكترونية مجانية</string>
+    <string name="search_filter_paid_ebooks">كتب إلكترونية مدفوعة</string>
+    <string name="search_filter_button">تصفية</string>
+    <string name="search_clear">مسح البحث</string>
+    <string name="back_button">رجوع</string>
+</resources>
