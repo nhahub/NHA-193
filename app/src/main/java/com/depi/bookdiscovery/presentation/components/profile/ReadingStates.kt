@@ -54,12 +54,12 @@ fun ReadingStats(
             ) {
                 StatItem(
                     count = stats.booksRead,
-                    label = "Books Read",
+                    label = stringResource(R.string.profile_books_read),
                     modifier = Modifier.weight(1f)
                 )
                 StatItem(
                     count = stats.favorites,
-                    label = "Favorites",
+                    label = stringResource(R.string.profile_favorites),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -72,12 +72,12 @@ fun ReadingStats(
             ) {
                 StatItem(
                     count = stats.currentlyReading,
-                    label = "Currently Reading",
+                    label =stringResource(R.string.profile_currently_reading),
                     modifier = Modifier.weight(1f)
                 )
                 StatItem(
                     count = stats.avgRating,
-                    label = "Avg Rating",
+                    label = stringResource(R.string.profile_avg_rating),
                     isDecimal = true,
                     modifier = Modifier.weight(1f)
                 )

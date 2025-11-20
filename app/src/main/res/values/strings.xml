@@ -22,7 +22,10 @@
     <string name="signup_button_text">Sign Up</string>
     <string name="signup_login_text">Already have an account?</string>
     <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="web_client_id">989863235776-tj8p4haptd4ib9flgmsrj7549gioi8ir.apps.googleusercontent.com</string>>
+    <string name="signup_agree">I agree to </string>
+    <string name="signup_terms">Terms of Services</string>
+    <string name="signup_concate">and</string>
+    <string name="signup_privacy">Privacy Policy</string>
 
     <string name="search_recent_searches">Recent Searches</string>
     <string name="search_trending">Trending</string>
@@ -93,4 +96,22 @@
     <string name="user_books_currently_reading">Currently Reading</string>
     <string name="user_books_finished">Finished</string>
     <string name="user_books_my_favorites">My Favorites</string>
+    <string name="search_title">Search</string>
+
+    <string name="search_filter_by_print_type">Filter by type of printing</string>
+    <string name="search_filter_by_ebook_type">Filter by e-book type</string>
+    <string name="search_filter_all">All</string>
+    <string name="search_filter_books">Books</string>
+    <string name="search_filter_magazines">Magazines</string>
+    <string name="search_filter_free_ebooks">Free e-books</string>
+    <string name="search_filter_paid_ebooks">Paid e-books</string>
+    <string name="search_filter_button">Filtering</string>
+    <string name="search_clear">Clear search</string>
+    <string name="back_button">Back</string>
+
+    <string name="logout_button">Logout</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="logout_cancel">Cancel</string>
+    <string name="logout_confirm">Confirm Logout</string>
+
 </resources>

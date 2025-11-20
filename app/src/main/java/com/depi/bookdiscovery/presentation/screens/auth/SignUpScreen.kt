@@ -16,8 +16,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +57,8 @@ fun SignUpScreen(
     val googleAuthClient = remember {
         GoogleAuthClient(context)
     }
+    var isChecked by remember { mutableStateOf(false) }
+    var shouldShowTermsError by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
     LaunchedEffect(state.isSuccess) {
@@ -114,9 +119,12 @@ fun SignUpScreen(
                 error = state.confirmPasswordError
             )
             TermsAndPolicyRow(
-                checked = state.termsAccepted,
-                showError = false,
-                onCheckedChange = {vm.onEvent(AuthEvent.TermsChanged(it))},
+                checked = isChecked,
+                showError = shouldShowTermsError,
+                onCheckedChange = {isChecked = it
+                    if (it) {
+                        shouldShowTermsError = false
+                    }},
                 onTermsClick = {},
                 onPrivacyClick = {}
             )

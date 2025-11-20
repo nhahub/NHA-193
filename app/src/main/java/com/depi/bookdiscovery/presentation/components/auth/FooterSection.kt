@@ -13,8 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.depi.bookdiscovery.R
 
 
 @Composable
@@ -87,26 +89,26 @@ fun TermsAndPolicyRow(
             Row {
 
                 Text(
-                    text = "I agree to the ",
+                    text = stringResource(R.string.signup_agree),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 ClickableText(
-                    clickableText = "Terms of Service",
+                    clickableText = stringResource(R.string.signup_terms),
                     onClick = onTermsClick
                 )
 
             }
             Row {
                 Text(
-                    text = " and ",
+                    text = stringResource(R.string.signup_concate),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
 
                 )
                 ClickableText(
-                    clickableText = "Privacy Policy",
+                    clickableText = stringResource(R.string.signup_privacy),
                     onClick = onPrivacyClick,
                 )
             }

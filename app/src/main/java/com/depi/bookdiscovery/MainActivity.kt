@@ -16,10 +16,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.depi.bookdiscovery.presentation.AppNavigation
 import com.depi.bookdiscovery.util.SettingsDataStore
 import com.depi.bookdiscovery.ui.theme.BookDiscoveryTheme
-import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModel
-import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModelFactory
+import com.depi.bookdiscovery.presentation.SettingsViewModel
+import com.depi.bookdiscovery.presentation.SettingsViewModelFactory
 import com.depi.bookdiscovery.util.LocaleContextWrapper
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

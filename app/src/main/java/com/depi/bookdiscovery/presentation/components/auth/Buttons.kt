@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -107,7 +108,7 @@ fun GoogleButton(
         ){
             Icon(
                 painter = painterResource(id = R.drawable.google_icon),
-                contentDescription = "Continue with Google",
+                contentDescription = stringResource(R.string.sign_in_with_google),
                 tint = Color.Unspecified,
                 modifier = Modifier.size(24.dp)
             )
@@ -115,9 +116,9 @@ fun GoogleButton(
                 modifier = Modifier.width(8.dp)
             )
             Text(
-                text = "Continue with Google",
+                text = stringResource(R.string.sign_in_with_google),
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleSmall
 
             )
 
