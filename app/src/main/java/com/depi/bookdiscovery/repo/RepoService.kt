@@ -8,6 +8,7 @@ interface RepoService {
     suspend fun searchBooks(
         searchTerms: String,
         maxResults: Int,
-        startIndex: Int
+        startIndex: Int,
+        string: String
     ): Response<BooksResponse>
 }

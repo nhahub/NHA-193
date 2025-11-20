@@ -1,4 +1,3 @@
-
 package com.depi.bookdiscovery.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -46,6 +45,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun BookDiscoveryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) {

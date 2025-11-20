@@ -1,7 +1,6 @@
 package com.depi.bookdiscovery
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.depi.bookdiscovery.util.SettingsDataStore
@@ -88,7 +87,7 @@ class SearchViewModel(
 
     private suspend fun fetchBooks() {
         try {
-            val response = repo.searchBooks(currentQuery, maxResults, startIndex)
+            val response = repo.searchBooks(currentQuery, maxResults, startIndex, "newest")
             if (response.isSuccessful) {
                 val newBooks = response.body()?.items ?: emptyList()
                 val currentBooks = if (_uiState.value is UiState.Success) {
@@ -99,7 +98,8 @@ class SearchViewModel(
                 _uiState.value = UiState.Success(currentBooks + newBooks)
                 startIndex += newBooks.size
             } else {
-                _uiState.value = UiState.Error("Something went wrong: ${response.errorBody()?.string()}")
+                _uiState.value =
+                    UiState.Error("Something went wrong: ${response.errorBody()?.string()}")
             }
         } catch (e: Exception) {
             _uiState.value = UiState.Error("Something went wrong: ${e.message}")

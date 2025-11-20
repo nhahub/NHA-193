@@ -34,9 +34,10 @@ class MainViewModel(
         viewModelScope.launch {
             if (NetworkUtils.isInternetAvailable(context)) {
                 try {
-                    val response = repo.searchBooks("fiction", 10, 0)
+                    val response = repo.searchBooks("fiction", 10, 0, "newest")
                     if (response.isSuccessful) {
-                        _featuredBooksState.value = UiState.Success(response.body()?.items ?: emptyList())
+                        _featuredBooksState.value =
+                            UiState.Success(response.body()?.items ?: emptyList())
                     } else {
                         _featuredBooksState.value = UiState.Error("Error: ${response.message()}")
                     }
@@ -53,9 +54,10 @@ class MainViewModel(
         viewModelScope.launch {
             if (NetworkUtils.isInternetAvailable(context)) {
                 try {
-                    val response = repo.searchBooks("New York Times Bestsellers", 10, 0)
+                    val response = repo.searchBooks("New York Times Bestsellers", 10, 0, "newest")
                     if (response.isSuccessful) {
-                        _popularBooksState.value = UiState.Success(response.body()?.items ?: emptyList())
+                        _popularBooksState.value =
+                            UiState.Success(response.body()?.items ?: emptyList())
                     } else {
                         _popularBooksState.value = UiState.Error("Error: ${response.message()}")
                     }
@@ -74,7 +76,8 @@ class MainViewModel(
                 try {
                     val response = repo.searchBooks("science", 10, 0, "newest")
                     if (response.isSuccessful) {
-                        _newReleasesState.value = UiState.Success(response.body()?.items ?: emptyList())
+                        _newReleasesState.value =
+                            UiState.Success(response.body()?.items ?: emptyList())
                     } else {
                         _newReleasesState.value = UiState.Error("Error: ${response.message()}")
                     }

@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.coil.compose)
+    implementation("com.valentinilk.shimmer:compose-shimmer:1.3.3")
 
     testImplementation(libs.junit)
 

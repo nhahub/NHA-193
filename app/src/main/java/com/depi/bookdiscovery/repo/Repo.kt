@@ -10,7 +10,8 @@ class Repo() : RepoService {
     override suspend fun searchBooks(
         searchTerms: String,
         maxResults: Int,
-        startIndex: Int
+        startIndex: Int,
+        string: String
     ): Response<BooksResponse> {
         return API.apiService.searchBooks(searchTerms, maxResults, startIndex)
     }
