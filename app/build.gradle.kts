@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,11 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
+val localProp = Properties()
+val localPropFile = rootProject.file("local.properties")
+if(localPropFile.exists()){
+    localProp.load(localPropFile.inputStream())
+}
 android {
     namespace = "com.depi.bookdiscovery"
     compileSdk = 36
@@ -18,6 +25,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String","MY_CLIENT_ID",localProp.getProperty("FIREBASE_CLIENT_ID"))
     }
 
     buildTypes {
@@ -38,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -63,11 +73,10 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.googleid)
+    implementation(libs.play.services.auth)
     implementation(libs.gson)
+    implementation(libs.gson.converter)
     implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.datastore.preferences)
-    implementation(libs.navigation.compose)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.credentials)
     implementation(libs.material.icons)

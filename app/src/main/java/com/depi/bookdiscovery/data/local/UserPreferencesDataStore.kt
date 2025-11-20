@@ -8,7 +8,8 @@ import com.depi.bookdiscovery.data.model.UserEntity
 import kotlinx.coroutines.flow.first
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
-
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 
 val Context.userDataStore by preferencesDataStore(name = "user_prefs")
@@ -44,6 +45,10 @@ class UserPreferencesDataStore(
             email = email
         )
     }
+    val isUserLoggedInFlow: Flow<Boolean> = dataStore.data
+        .map { prefs ->
+            prefs[KEY_USER_ID] != null
+        }
 
     suspend fun clearUser() {
         dataStore.edit { it.clear() }

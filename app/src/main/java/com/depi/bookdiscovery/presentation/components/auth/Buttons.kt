@@ -90,6 +90,7 @@ fun OrDivider(){
 @Composable
 fun GoogleButton(
     onClick: () -> Unit,
+    text: String
 ){
     Button(
         onClick = onClick,
@@ -107,7 +108,7 @@ fun GoogleButton(
         ){
             Icon(
                 painter = painterResource(id = R.drawable.google_icon),
-                contentDescription = "Continue with Google",
+                contentDescription = text,
                 tint = Color.Unspecified,
                 modifier = Modifier.size(24.dp)
             )
@@ -115,9 +116,9 @@ fun GoogleButton(
                 modifier = Modifier.width(8.dp)
             )
             Text(
-                text = "Continue with Google",
+                text = text,
                 color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleSmall
 
             )
 

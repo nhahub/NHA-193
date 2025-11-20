@@ -7,19 +7,18 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.depi.bookdiscovery.R
-
+import com.depi.bookdiscovery.BuildConfig
 class GoogleAuthClient(
     private val context: Context
 ) {
 
     private val credentialManager = CredentialManager.create(context)
-
+    val clientId = BuildConfig.MY_CLIENT_ID
     suspend fun signIn(activity: Activity): String? {
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(context.getString(R.string.web_client_id))
+            .setServerClientId(clientId)
             .setAutoSelectEnabled(false)
             .build()
 

@@ -14,8 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.depi.bookdiscovery.R
 
 data class ReadingGoalData(
     val current: Int,
@@ -39,12 +41,12 @@ fun ReadingGoal(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${goal.year} Reading Goal",
+                text = stringResource(R.string.profile_reading_goal),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.outline
             )
             Text(
-                text = "${goal.current} / ${goal.target} books",
+                text = "${goal.current} / ${goal.target} ${stringResource(R.string.profile_goal_books)}",
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Medium
             )
@@ -63,7 +65,7 @@ fun ReadingGoal(
         Spacer(modifier = Modifier.height(4.dp))
 
         Text(
-            text = "${(goal.progress * 100).toInt()}% complete",
+            text = stringResource(R.string.profile_complete, 2),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
