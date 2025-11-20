@@ -148,13 +148,13 @@ fun MainAppScreen(
                         settingsDataStore
                     )
                 )
-                SearchScreen(navController, searchViewModel)
+                SearchScreen(mainNavController, searchViewModel)
             }
             composable(Screen.UserBooks.route) {
                 UserBooksScreen()
             }
             composable(Screen.Categories.route) {
-                CategoriesScreen()
+                CategoriesScreen(mainNavController)
             }
             composable(Screen.Profile.route) {
                 ProfileScreen(

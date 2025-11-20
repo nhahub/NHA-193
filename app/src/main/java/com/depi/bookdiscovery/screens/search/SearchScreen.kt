@@ -1,5 +1,6 @@
 package com.depi.bookdiscovery.screens.search
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,15 +13,18 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,15 +34,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.depi.bookdiscovery.R
+import com.depi.bookdiscovery.Screen
 import com.depi.bookdiscovery.SearchViewModel
 import com.depi.bookdiscovery.SearchViewModelFactory
 import com.depi.bookdiscovery.components.BookCard
 import com.depi.bookdiscovery.dto.FilterOption
 import com.depi.bookdiscovery.ui.theme.BookDiscoveryTheme
-import com.depi.bookdiscovery.util.SettingsDataStore
 import com.depi.bookdiscovery.ui.viewmodel.UiState
+import com.depi.bookdiscovery.util.SettingsDataStore
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SearchScreen(
     navController: NavController,
@@ -46,9 +52,15 @@ fun SearchScreen(
 ) {
     var searchText by remember { mutableStateOf("") }
     val uiState by searchViewModel.uiState.collectAsStateWithLifecycle()
-    val searchHistory by searchViewModel.searchHistory.collectAsStateWithLifecycle(initialValue = emptySet())
+    val searchHistory by searchViewModel.getLatestSearches(5)
+        .collectAsStateWithLifecycle(initialValue = emptySet())
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    // State to track favorite books
+    val favoriteBooks = remember { mutableStateMapOf<String, Boolean>() }
 
     LaunchedEffect(searchText) {
         if (searchText.isNotEmpty()) {
@@ -57,11 +69,18 @@ fun SearchScreen(
     }
 
     val filterOptions = listOf(
-        FilterOption("All", ""),
-        FilterOption("Books", "books"),
-        FilterOption("Magazines", "magazines")
+        FilterOption(stringResource(R.string.search_filter_all), ""),
+        FilterOption(stringResource(R.string.search_filter_books), "books"),
+        FilterOption(stringResource(R.string.search_filter_magazines), "magazines")
     )
     var selectedFilter by remember { mutableStateOf(filterOptions.first()) }
+
+    val ebookFilterOptions = listOf(
+        FilterOption(stringResource(R.string.search_filter_all), ""),
+        FilterOption(stringResource(R.string.search_filter_free_ebooks), "free-ebooks"),
+        FilterOption(stringResource(R.string.search_filter_paid_ebooks), "paid-ebooks")
+    )
+    var selectedEbookFilter by remember { mutableStateOf(ebookFilterOptions.first()) }
 
     val trendingTerms = remember {
         mutableStateListOf(
@@ -77,12 +96,17 @@ fun SearchScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Search", color = MaterialTheme.colorScheme.onBackground) },
+                title = {
+                    Text(
+                        stringResource(R.string.search_title),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.back_button),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -101,125 +125,213 @@ fun SearchScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = {
-                    searchText = it
-                    searchViewModel.search(it, selectedFilter.value)
-                },
-                placeholder = {
-                    Text(
-                        "Search books...",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                OutlinedTextField(
+                    value = searchText,
+                    onValueChange = {
+                        searchText = it
+                        searchViewModel.clearOldSearch()
+                        searchViewModel.search(it, selectedFilter.value, selectedEbookFilter.value)
+                    },
+                    placeholder = {
+                        Text(
+                            stringResource(R.string.search_bar),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Search,
+                            contentDescription = stringResource(R.string.search_title),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    },
+                    trailingIcon = {
+                        if (searchText.isNotEmpty()) {
+                            IconButton(onClick = { searchText = "" }) {
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = stringResource(R.string.search_clear),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = {
+                        searchViewModel.searchNow(
+                            searchText,
+                            selectedFilter.value,
+                            selectedEbookFilter.value
+                        )
+                        keyboardController?.hide()
+                    }),
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface
                     )
-                },
-                leadingIcon = {
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                IconButton(onClick = { showBottomSheet = true }) {
                     Icon(
-                        Icons.Filled.Search,
-                        contentDescription = "Search",
+                        Icons.Filled.Tune,
+                        contentDescription = stringResource(R.string.search_filter_button),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                },
-                trailingIcon = {
-                    if (searchText.isNotEmpty()) {
-                        IconButton(onClick = { searchText = "" }) {
-                            Icon(
-                                Icons.Filled.Close,
-                                contentDescription = "Clear search",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                }
+            }
+
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showBottomSheet = false },
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            stringResource(R.string.search_filter_by_print_type),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(filterOptions) { filter ->
+                                FilterChip(
+                                    selected = filter == selectedFilter,
+                                    onClick = {
+                                        selectedFilter = filter
+                                        searchViewModel.search(
+                                            searchText,
+                                            selectedFilter.value,
+                                            selectedEbookFilter.value
+                                        )
+                                    },
+                                    label = { Text(filter.label) }
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                            stringResource(R.string.search_filter_by_ebook_type),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(ebookFilterOptions) { filter ->
+                                FilterChip(
+                                    selected = filter == selectedEbookFilter,
+                                    onClick = {
+                                        selectedEbookFilter = filter
+                                        searchViewModel.search(
+                                            searchText,
+                                            selectedFilter.value,
+                                            selectedEbookFilter.value
+                                        )
+                                    },
+                                    label = { Text(filter.label) }
+                                )
+                            }
                         }
                     }
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = {
-                    searchViewModel.searchNow(searchText, selectedFilter.value)
-                    keyboardController?.hide()
-                }),
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(filterOptions) { filter ->
-                    FilterChip(
-                        selected = filter == selectedFilter,
-                        onClick = { selectedFilter = filter },
-                        label = { Text(filter.label) }
-                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             if (searchText.isEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Recent Searches",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    if (searchHistory.isNotEmpty()) {
-                        TextButton(onClick = { searchViewModel.clearSearchHistory() }) {
-                            Text("Clear All")
-                        }
-                    }
-                }
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    items(searchHistory.toList().reversed()) { search ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { searchText = search }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                if (searchHistory.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 Icons.Filled.History,
-                                contentDescription = "History",
+                                contentDescription = stringResource(R.string.search_recent_searches),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = search,
-                                fontSize = 16.sp,
+                                text = stringResource(R.string.search_recent_searches),
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
+                        }
+                        TextButton(onClick = { searchViewModel.clearSearchHistory() }) {
+                            Text(stringResource(R.string.search_clear_all))
+                        }
+                    }
+                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                        items(searchHistory.toList()) { search ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        searchText = search
+                                        searchViewModel.searchNow(
+                                            search,
+                                            selectedFilter.value,
+                                            selectedEbookFilter.value
+                                        )
+                                    }
+                                    .padding(vertical = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Filled.History,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Text(
+                                    text = search,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
                         }
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    text = "Trending Terms",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    items(trendingTerms) { term ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.TrendingUp,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = stringResource(R.string.search_trending),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    trendingTerms.forEach { term ->
                         FilterChip(
-                            onClick = { searchText = term },
+                            modifier = Modifier.padding(bottom = 4.dp),
+                            onClick = {
+                                searchText = term
+                                searchViewModel.searchNow(
+                                    term,
+                                    selectedFilter.value,
+                                    selectedEbookFilter.value
+                                )
+                            },
                             label = { Text(term) },
-                            selected = false
+                            selected = false,
+                            shape = RoundedCornerShape(16.dp)
                         )
                     }
                 }
@@ -248,7 +360,32 @@ fun SearchScreen(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 items(state.data) { book ->
-                                    BookCard(book = book)
+                                    val isFavorite = favoriteBooks[book.id] ?: false
+                                    BookCard(
+                                        book = book,
+                                        isFavorite = isFavorite,
+                                        onFavoriteClick = {
+                                            val newFavoriteState = !isFavorite
+                                            favoriteBooks[book.id as String] = newFavoriteState
+                                            if (newFavoriteState) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Added to favorites",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                // TODO: call a function to add the book to favorites
+                                            } else {
+                                                // TODO: call a function to remove the book from favorites
+                                            }
+                                        },
+                                        onCardClick = {
+                                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                "book",
+                                                book
+                                            )
+                                            navController.navigate(Screen.BookDetailsScreenRoute.route)
+                                        }
+                                    )
                                 }
                                 item {
                                     if (state.data.isNotEmpty()) {

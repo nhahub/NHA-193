@@ -82,4 +82,16 @@
     <string name="user_books_currently_reading">Currently Reading</string>
     <string name="user_books_finished">Finished</string>
     <string name="user_books_my_favorites">My Favorites</string>
+    <string name="search_title">Search</string>
+
+    <string name="search_filter_by_print_type">Filter by Print Type</string>
+    <string name="search_filter_by_ebook_type">Filter by Ebook Type</string>
+    <string name="search_filter_all">All</string>
+    <string name="search_filter_books">Books</string>
+    <string name="search_filter_magazines">Magazines</string>
+    <string name="search_filter_free_ebooks">Free eBooks</string>
+    <string name="search_filter_paid_ebooks">Paid eBooks</string>
+    <string name="search_filter_button">Filter</string>
+    <string name="search_clear">Clear search</string>
+    <string name="back_button">Back</string>
 </resources>

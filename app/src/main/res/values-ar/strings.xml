@@ -82,4 +82,16 @@
     <string name="user_books_currently_reading">أقرأ حاليا</string>
     <string name="user_books_finished">انتهيت</string>
     <string name="user_books_my_favorites">مفضلاتي</string>
+    <string name="search_title">بحث</string>
+
+    <string name="search_filter_by_print_type">التصفية حسب نوع الطباعة</string>
+    <string name="search_filter_by_ebook_type">التصفية حسب نوع الكتاب الإلكتروني</string>
+    <string name="search_filter_all">الكل</string>
+    <string name="search_filter_books">كتب</string>
+    <string name="search_filter_magazines">مجلات</string>
+    <string name="search_filter_free_ebooks">كتب إلكترونية مجانية</string>
+    <string name="search_filter_paid_ebooks">كتب إلكترونية مدفوعة</string>
+    <string name="search_filter_button">تصفية</string>
+    <string name="search_clear">مسح البحث</string>
+    <string name="back_button">رجوع</string>
 </resources>

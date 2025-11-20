@@ -1,8 +1,11 @@
 package com.depi.bookdiscovery.dto
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class VolumeInfo(
     @SerializedName("allowAnonLogging")
     var allowAnonLogging: Boolean?,
@@ -33,5 +36,11 @@ data class VolumeInfo(
     @SerializedName("subtitle")
     var subtitle: String?,
     @SerializedName("title")
-    var title: String?
-)
+    var title: String?,
+    @SerializedName("industryIdentifiers")
+    var industryIdentifiers: List<IndustryIdentifier>?,
+    @SerializedName("averageRating")
+    var averageRating: Float?,
+    @SerializedName("ratingsCount")
+    var ratingsCount: Int?
+) : Parcelable

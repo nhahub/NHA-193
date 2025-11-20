@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    alias(libs.plugins.kotlin.parcelable)
 }
 
 android {
@@ -60,7 +62,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.coil.compose)
-    implementation("com.valentinilk.shimmer:compose-shimmer:1.3.3")
+    implementation(libs.androidx.splashscreen)
+    implementation(libs.shimmer)
 
     testImplementation(libs.junit)
 

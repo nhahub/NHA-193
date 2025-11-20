@@ -9,6 +9,8 @@ interface RepoService {
         searchTerms: String,
         maxResults: Int,
         startIndex: Int,
-        string: String
+        orderBy: String = "relevance"
     ): Response<BooksResponse>
+
+    suspend fun getBookFromOpenLibrary(bibkeys: String): Response<Map<String, com.depi.bookdiscovery.dto.OpenLibraryBook>>
 }

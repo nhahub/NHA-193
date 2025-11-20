@@ -1,5 +1,6 @@
 package com.depi.bookdiscovery.screens.main
 
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,11 +37,14 @@ import com.depi.bookdiscovery.R
 import com.depi.bookdiscovery.Screen
 import com.depi.bookdiscovery.dto.Item
 import com.depi.bookdiscovery.ui.theme.*
+import com.depi.bookdiscovery.ui.theme.YellowStar
 import com.depi.bookdiscovery.ui.viewmodel.MainViewModel
 import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModel
 import com.depi.bookdiscovery.ui.viewmodel.UiState
 import com.valentinilk.shimmer.shimmer
 import kotlin.random.Random
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 
 data class Book(
     val title: String?,
@@ -471,9 +478,13 @@ fun FeaturedBookCardPlaceholder() {
 @Composable
 fun PopularBookCardPlaceholder() {
     Box(modifier = Modifier.shimmer()) {
-        Row(modifier = Modifier
-            .width(300.dp)
-            .height(140.dp)) {
+        Row(
+            modifier = Modifier
+             .width(300.dp)
+            .height(150.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.Gray)
+        ) {
             Box(
                 modifier = Modifier
                     .width(100.dp)
