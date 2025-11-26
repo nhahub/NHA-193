@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.depi.bookdiscovery.R
 
 
+
 @Composable
 fun FooterText(
     statement: String,
@@ -39,21 +40,21 @@ fun FooterText(
             color = Color(0xFF6C6C6C),
 
         )
-        ClickableText(clickableText = clickableText, onClick = onClick )
+        ClickableTextAuth(clickableText = clickableText, onClick = onClick )
 
     }
 }
 
 
 @Composable
-fun ClickableText(
+fun ClickableTextAuth(
     modifier: Modifier = Modifier,
     clickableText: String,
     onClick: ()-> Unit
 ){
     Text(
         text = clickableText,
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.primary,
         modifier = modifier
             .clickable{
@@ -65,7 +66,7 @@ fun ClickableText(
 @Composable
 fun TermsAndPolicyRow(
     checked: Boolean,
-    showError: Boolean = false,
+    showError: Boolean ,
     onCheckedChange: (Boolean) -> Unit,
     onTermsClick: () -> Unit,
     onPrivacyClick: () -> Unit
@@ -75,7 +76,6 @@ fun TermsAndPolicyRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, end = 8.dp)
     ) {
 
         Checkbox(
@@ -90,24 +90,22 @@ fun TermsAndPolicyRow(
 
                 Text(
                     text = stringResource(R.string.signup_agree),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                ClickableText(
+                ClickableTextAuth(
                     clickableText = stringResource(R.string.signup_terms),
                     onClick = onTermsClick
                 )
 
-            }
-            Row {
                 Text(
                     text = stringResource(R.string.signup_concate),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface
 
                 )
-                ClickableText(
+                ClickableTextAuth(
                     clickableText = stringResource(R.string.signup_privacy),
                     onClick = onPrivacyClick,
                 )
@@ -116,7 +114,7 @@ fun TermsAndPolicyRow(
     }
     if (showError && !checked) {
         Text(
-            text = "You must agree before continuing",
+            text = stringResource(R.string.signup_terms_error_message),
             color = MaterialTheme.colorScheme.error,
             fontSize = 12.sp,
             modifier = Modifier.padding(start = 40.dp)

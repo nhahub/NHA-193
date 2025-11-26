@@ -46,7 +46,7 @@ fun ReadingGoal(
                 color = MaterialTheme.colorScheme.outline
             )
             Text(
-                text = "${goal.current} / ${goal.target} books",
+                text = "${goal.current} / ${goal.target} ${stringResource(R.string.profile_goal_books)}",
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Medium
             )

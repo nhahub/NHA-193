@@ -1,31 +1,31 @@
 package com.depi.bookdiscovery.presentation.screens.auth
 
 
-data class AuthState(
-    val name: String = "",
+data class AuthFormState(
     val email: String = "",
     val password: String = "",
+    val successUserId: String? = null,
+    val isLoading: Boolean = false,
+    val generalError: String? = null,
+    val isSuccess: Boolean = false,
+
+    val name: String = "",
     val confirmPassword: String = "",
     val termsAccepted: Boolean = false,
 
+    val emailError: String? = null,
+    val passwordError: String? = null,
     val nameError: String? = null,
-    val emailError: String? = null,
-    val passwordError: String? = null,
     val confirmPasswordError: String? = null,
-    val termsError: String? = null,
+    val termsError: Boolean = false
+)
 
-    val isLoading: Boolean = false,
-    val isSuccess: Boolean = false,
-    val generalError: String? = null
+data class SessionState(
+    val isAuthenticated: Boolean = false,
+    val currentUserId: String? = null,
+    val currentUserEmail: String? = null,
+    val currentUserName: String? = null,
+    val isLoading: Boolean = true
 )
 
 
-data class LoginState(
-    val email: String = "",
-    val password: String = "",
-    val emailError: String? = null,
-    val passwordError: String? = null,
-    val isLoading: Boolean = false,
-    val successUserId: String? = null,
-    val generalError: String? = null
-)

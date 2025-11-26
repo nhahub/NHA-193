@@ -2,13 +2,17 @@ package com.depi.bookdiscovery.presentation.screens.auth
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -28,7 +31,7 @@ import com.depi.bookdiscovery.R
 import com.depi.bookdiscovery.data.remote.GoogleAuthClient
 import com.depi.bookdiscovery.presentation.Screen
 import com.depi.bookdiscovery.presentation.components.auth.AuthCard
-import com.depi.bookdiscovery.presentation.components.auth.ClickableText
+import com.depi.bookdiscovery.presentation.components.auth.ClickableTextAuth
 import com.depi.bookdiscovery.presentation.components.auth.FooterText
 import com.depi.bookdiscovery.presentation.components.auth.GoogleButton
 import com.depi.bookdiscovery.presentation.components.auth.HeaderGreeting
@@ -43,7 +46,7 @@ fun LoginScreen(
     navController: NavController,
     factory: ViewModelProvider.Factory,
 ) {
-    val vm: LoginViewModel = viewModel(factory = factory)
+    val vm: AuthFormViewModel = viewModel(factory = factory)
     val state = vm.state.collectAsState().value
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -74,7 +77,7 @@ fun LoginScreen(
             // 1) Email field
             TextField(
                 value = state.email,
-                onValueChange = { vm.onEvent(LoginEvent.EmailChanged(it)) },
+                onValueChange = { vm.onEvent(AuthFormEvent.EmailChanged(it)) },
                 label = stringResource(R.string.login_email_hint),
                 leadingIcon = Icons.Outlined.Email,
                 error = state.emailError
@@ -83,7 +86,7 @@ fun LoginScreen(
             // 2) Password
             TextField(
                 value = state.password,
-                onValueChange = { vm.onEvent(LoginEvent.PasswordChanged(it)) },
+                onValueChange = { vm.onEvent(AuthFormEvent.PasswordChanged(it)) },
                 label = stringResource(R.string.login_password_hint),
                 leadingIcon = Icons.Outlined.Lock,
                 isPassword = true,
@@ -91,19 +94,19 @@ fun LoginScreen(
             )
 
             // 3) Forgot password
-            ClickableText(
+            ClickableTextAuth(
                 modifier = Modifier.align(Alignment.End),
                 clickableText = stringResource(R.string.login_forgot_password),
-                onClick = { vm.onEvent(LoginEvent.ForgotPassword) }
+                onClick = { vm.onEvent(AuthFormEvent.ForgotPassword) }
             )
 
             // 4) Sign In button
             RegisterButton(
                 text = stringResource(R.string.login_button_text),
-                onClick = { vm.onEvent(LoginEvent.Submit) }
+                onClick = { vm.onEvent(AuthFormEvent.SubmitLogin) }
             )
             OrDivider()
-            // 5) Google Sign-In event
+            // 5) Google Sign-In button
             GoogleButton (
                 onClick = {
                     scope.launch {
@@ -118,8 +121,7 @@ fun LoginScreen(
                             val token = googleAuthClient.signIn(activity)
 
                             if (token != null) {
-                                vm.googleLogin(token)
-                            } else {
+                                vm.onEvent(AuthFormEvent.GoogleLogin(token))                            } else {
                                 android.util.Log.d("GoogleLogin", "Sign in cancelled by user")
                             }
 
@@ -127,7 +129,8 @@ fun LoginScreen(
                             android.util.Log.e("GoogleLogin", "Error: ${e.message}")
                         }
                     }
-                }
+                },
+                text = stringResource(R.string.sign_in_with_google)
             )
 
             // 6) Error
@@ -136,8 +139,8 @@ fun LoginScreen(
             }
 
             // 7) Navigate when login succeeds
-            state.successUserId?.let {
-                LaunchedEffect(true) {
+            LaunchedEffect(state.isSuccess) {
+                if (state.isSuccess) {
                     navController.navigate("main") {
                         popUpTo("login") { inclusive = true }
                     }
@@ -153,5 +156,20 @@ fun LoginScreen(
                 navController.navigate(Screen.SignUp.route)
             }
         )
+
+    }
+//    9)Loading box
+    if (state.isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f))
+                .clickable(enabled = false) {},
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }

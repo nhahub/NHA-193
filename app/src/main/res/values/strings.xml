@@ -9,7 +9,7 @@
     <string name="login_button_text">Sign In</string>
     <string name="login_forgot_password">Forgot Password?</string>
     <string name="login_signup_text">Don\'t have an account?</string>
-
+    <string name="sign_in_with_google">Sign in with Google</string>
 
     <string name="signup_title_greeting">Join BookFinder</string>
     <string name="signup_subtitle_greeting">Create your account to start discovering amazing books</string>
@@ -21,11 +21,12 @@
     <string name="signup_confirm_password_hint">Confirm Password</string>
     <string name="signup_button_text">Sign Up</string>
     <string name="signup_login_text">Already have an account?</string>
-    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_up_with_google">Sign up with Google</string>
     <string name="signup_agree">I agree to </string>
     <string name="signup_terms">Terms of Services</string>
     <string name="signup_concate">and</string>
     <string name="signup_privacy">Privacy Policy</string>
+    <string name="signup_terms_error_message">You must agree before continuing</string>
 
     <string name="search_recent_searches">Recent Searches</string>
     <string name="search_trending">Trending</string>
@@ -66,6 +67,7 @@
     <string name="profile_favorites">Favorites</string>
     <string name="profile_avg_rating">Avg Rating</string>
     <string name="profile_reading_goal">2024 Reading Goal</string>
+    <string name="profile_goal_books">book</string>
     <string name="profile_complete">%d%% complete</string>
     <string name="profile_quick_settings">Quick Settings</string>
     <string name="profile_recent_activity">Recent Activity</string>

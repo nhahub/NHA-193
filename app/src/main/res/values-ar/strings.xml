@@ -9,6 +9,8 @@
     <string name="login_button_text">تسجيل الدخول</string>
     <string name="login_forgot_password">هل نسيت كلمة المرور؟</string>
     <string name="login_signup_text">ليس لديك حساب؟ سجل الان</string>
+    <string name="sign_in_with_google">تسجيل الدخول باستخدام جوجل</string>
+
 
     <string name="signup_title_greeting">انضم الى bookfinder</string>
     <string name="signup_subtitle_greeting">قم بانشاء حسابك لبدء اكتشاف كتب مذهلة</string>
@@ -20,11 +22,13 @@
     <string name="signup_confirm_password_hint">تأكيد كلمة المرور</string>
     <string name="signup_button_text">إنشاء حساب</string>
     <string name="signup_login_text">لديك حساب بالفعل؟ تسجيل الدخول</string>
-    <string name="sign_in_with_google">تسجيل الدخول باستخدام جوجل</string>
-    <string name="signup_agree">أنا أوافق على</string>
-    <string name="signup_terms">شروط</string>
+    <string name="sign_up_with_google">انشاء حساب باستخدام جوجل</string>
+    <string name="signup_agree">أنا أوافق على </string>
+    <string name="signup_terms">شروط </string>
     <string name="signup_concate">و</string>
     <string name="signup_privacy">سياسة الخصوصية</string>
+    <string name="signup_terms_error_message">يجب عليك الموافقة قبل الاستمرار</string>
+
 
     <string name="search_recent_searches">عمليات البحث الأخيرة</string>
     <string name="search_trending">الشائع</string>
@@ -65,6 +69,7 @@
     <string name="profile_favorites">المفضلة</string>
     <string name="profile_avg_rating">متوسط التقييم</string>
     <string name="profile_reading_goal">هدف القراءة لعام 2024</string>
+    <string name="profile_goal_books">كتاب</string>
     <string name="profile_complete">%d%% اكتمل</string>
     <string name="profile_quick_settings">إعدادات سريعة</string>
     <string name="profile_recent_activity">النشاط الأخير</string>

@@ -1,20 +1,17 @@
 package com.depi.bookdiscovery.presentation.screens.auth
 
+sealed class AuthFormEvent {
+    data class EmailChanged(val value: String) : AuthFormEvent()
+    data class PasswordChanged(val value: String) : AuthFormEvent()
+    data class NameChanged(val value: String) : AuthFormEvent()
+    data class ConfirmPasswordChanged(val value: String) : AuthFormEvent()
+    data class TermsChanged(val accepted: Boolean) : AuthFormEvent()
 
-sealed class AuthEvent {
-    data class NameChanged(val value: String): AuthEvent()
-    data class EmailChanged(val value: String): AuthEvent()
-    data class PasswordChanged(val value: String): AuthEvent()
-    data class ConfirmPasswordChanged(val value: String): AuthEvent()
-    data class TermsChanged(val accepted: Boolean): AuthEvent()
+    object SubmitLogin : AuthFormEvent()
+    object SubmitSignUp : AuthFormEvent()
+    object ForgotPassword : AuthFormEvent()
+    data class GoogleLogin(val idToken: String) : AuthFormEvent()
 
-    object SubmitSignUp: AuthEvent()
-    object ClearError : AuthEvent()
+    object ClearError : AuthFormEvent()
 }
 
-sealed class LoginEvent {
-    data class EmailChanged(val v: String): LoginEvent()
-    data class PasswordChanged(val v: String): LoginEvent()
-    object Submit: LoginEvent()
-    object ForgotPassword: LoginEvent()
-}
