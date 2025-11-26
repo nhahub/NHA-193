@@ -1,10 +1,12 @@
-package com.depi.bookdiscovery.presentation.screens.category
+package com.depi.bookdiscovery.screens.category
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ViewList
@@ -20,15 +22,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.depi.bookdiscovery.presentation.Screen
-import com.depi.bookdiscovery.presentation.screens.search.SearchViewModel
-import com.depi.bookdiscovery.presentation.components.BookCard
-import com.depi.bookdiscovery.presentation.components.BookGridItem
-import com.depi.bookdiscovery.util.UiState
+import com.depi.bookdiscovery.R
+import com.depi.bookdiscovery.Screen
+import com.depi.bookdiscovery.SearchViewModel
+import com.depi.bookdiscovery.components.BookCard
+import com.depi.bookdiscovery.components.BookGridItem
+import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
+import com.depi.bookdiscovery.database.entities.ReadingStatus
+import com.depi.bookdiscovery.dto.Item
+import com.depi.bookdiscovery.ui.viewmodel.UiState
+import com.depi.bookdiscovery.util.DatabaseHelper
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 
 // Helper function to get the icon for a category
@@ -64,9 +69,14 @@ fun CategoryBooksScreen(
 ) {
     val uiState by searchViewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val databaseHelper = remember { DatabaseHelper(context) }
     val favoriteBooks =
         remember { mutableStateMapOf<String, Boolean>() } // This should be hoisted later
     var isGridView by remember { mutableStateOf(true) }
+
+    // State for the unfavorite confirmation dialog
+    var showUnfavoriteDialog by remember { mutableStateOf(false) }
+    var bookToUnfavorite by remember { mutableStateOf<Item?>(null) }
 
     val listState = rememberLazyListState()
     val gridState = rememberLazyGridState()
@@ -80,6 +90,28 @@ fun CategoryBooksScreen(
             searchViewModel.clearOldSearch()
         }
     }
+
+    ConfirmUnfavoriteDialog(
+        showDialog = showUnfavoriteDialog,
+        bookTitle = bookToUnfavorite?.volumeInfo?.title ?: "this book",
+        onConfirm = {
+            bookToUnfavorite?.id?.let { bookId ->
+                favoriteBooks[bookId] = false
+                databaseHelper.toggleFavorite(
+                    bookId = bookId,
+                    isFavorite = false,
+                    onSuccess = { message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    },
+                    onError = { error ->
+                        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+            showUnfavoriteDialog = false
+        },
+        onDismiss = { showUnfavoriteDialog = false }
+    )
 
     Scaffold(
         topBar = {
@@ -163,14 +195,24 @@ fun CategoryBooksScreen(
                                         book = book,
                                         isFavorite = isFavorite,
                                         onFavoriteClick = {
-                                            val newFavoriteState = !isFavorite
-                                            favoriteBooks[book.id!!] = newFavoriteState
-                                            if (newFavoriteState) {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Added to favorites",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
+                                            if (isFavorite) {
+                                                bookToUnfavorite = book
+                                                showUnfavoriteDialog = true
+                                            } else {
+                                                book.id?.let { bookId ->
+                                                    favoriteBooks[bookId] = true
+                                                    databaseHelper.toggleFavoriteWithItem(
+                                                        item = book,
+                                                        isFavorite = true,
+                                                        onSuccess = { message ->
+                                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                        },
+                                                        onError = { error ->
+                                                            favoriteBooks[bookId] = false
+                                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    )
+                                                } ?: Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
                                             }
                                         },
                                         onCardClick = {
@@ -216,14 +258,24 @@ fun CategoryBooksScreen(
                                         book = book,
                                         isFavorite = isFavorite,
                                         onFavoriteClick = {
-                                            val newFavoriteState = !isFavorite
-                                            favoriteBooks[book.id!!] = newFavoriteState
-                                            if (newFavoriteState) {
-                                                Toast.makeText(
-                                                    context,
-                                                    "Added to favorites",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
+                                            if (isFavorite) {
+                                                bookToUnfavorite = book
+                                                showUnfavoriteDialog = true
+                                            } else {
+                                                book.id?.let { bookId ->
+                                                    favoriteBooks[bookId] = true
+                                                    databaseHelper.toggleFavoriteWithItem(
+                                                        item = book,
+                                                        isFavorite = true,
+                                                        onSuccess = { message ->
+                                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                        },
+                                                        onError = { error ->
+                                                            favoriteBooks[bookId] = false
+                                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    )
+                                                } ?: Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
                                             }
                                         },
                                         onCardClick = {
