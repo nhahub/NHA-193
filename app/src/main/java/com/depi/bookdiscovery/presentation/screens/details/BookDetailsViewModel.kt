@@ -3,11 +3,11 @@ package com.depi.bookdiscovery.screens.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.depi.bookdiscovery.data.model.dto.Item
 import com.depi.bookdiscovery.database.BookDiscoveryDatabase
 import com.depi.bookdiscovery.database.entities.ReadingStatus
 import com.depi.bookdiscovery.database.repository.LocalBookRepository
 import com.depi.bookdiscovery.database.repository.Result
-import com.depi.bookdiscovery.dto.Item
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

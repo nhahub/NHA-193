@@ -31,12 +31,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.rememberAsyncImagePainter
 import com.depi.bookdiscovery.R
+import com.depi.bookdiscovery.data.model.dto.Item
 import com.depi.bookdiscovery.presentation.Screen
 import com.depi.bookdiscovery.util.UiState
 import com.valentinilk.shimmer.shimmer
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import com.depi.bookdiscovery.presentation.SettingsViewModel
+import com.depi.bookdiscovery.util.DatabaseHelper
 
 data class Book(
     val id: String,

@@ -1,11 +1,11 @@
 package com.depi.bookdiscovery.util
 
 import android.content.Context
+import com.depi.bookdiscovery.data.model.dto.Item
 import com.depi.bookdiscovery.database.BookDiscoveryDatabase
 import com.depi.bookdiscovery.database.entities.ReadingStatus
 import com.depi.bookdiscovery.database.repository.LocalBookRepository
 import com.depi.bookdiscovery.database.repository.Result
-import com.depi.bookdiscovery.dto.Item
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

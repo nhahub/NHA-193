@@ -30,6 +30,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
+import com.depi.bookdiscovery.data.model.dto.Item
+import com.depi.bookdiscovery.util.DatabaseHelper
 
 // Helper function to get the icon for a category
 fun getIconForCategory(categoryId: String): ImageVector {
@@ -200,14 +203,26 @@ fun CategoryBooksScreen(
                                                         item = book,
                                                         isFavorite = true,
                                                         onSuccess = { message ->
-                                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(
+                                                                context,
+                                                                message,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                         },
                                                         onError = { error ->
                                                             favoriteBooks[bookId] = false
-                                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(
+                                                                context,
+                                                                error,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                         }
                                                     )
-                                                } ?: Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                                } ?: Toast.makeText(
+                                                    context,
+                                                    "Book ID is missing",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         },
                                         onCardClick = {
@@ -263,14 +278,26 @@ fun CategoryBooksScreen(
                                                         item = book,
                                                         isFavorite = true,
                                                         onSuccess = { message ->
-                                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(
+                                                                context,
+                                                                message,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                         },
                                                         onError = { error ->
                                                             favoriteBooks[bookId] = false
-                                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(
+                                                                context,
+                                                                error,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                         }
                                                     )
-                                                } ?: Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                                } ?: Toast.makeText(
+                                                    context,
+                                                    "Book ID is missing",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         },
                                         onCardClick = {

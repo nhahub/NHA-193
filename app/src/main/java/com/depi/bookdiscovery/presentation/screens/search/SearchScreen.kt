@@ -35,12 +35,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.depi.bookdiscovery.R
+import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
 import com.depi.bookdiscovery.presentation.Screen
 import com.depi.bookdiscovery.presentation.screens.search.SearchViewModel
 import com.depi.bookdiscovery.presentation.screens.search.SearchViewModelFactory
 import com.depi.bookdiscovery.presentation.components.BookCard
 import com.depi.bookdiscovery.data.model.dto.FilterOption
+import com.depi.bookdiscovery.data.model.dto.Item
 import com.depi.bookdiscovery.ui.theme.BookDiscoveryTheme
+import com.depi.bookdiscovery.util.DatabaseHelper
 import com.depi.bookdiscovery.util.UiState
 import com.depi.bookdiscovery.util.SettingsDataStore
 
@@ -52,7 +55,8 @@ fun SearchScreen(
 ) {
     var searchText by remember { mutableStateOf("") }
     val uiState by searchViewModel.uiState.collectAsStateWithLifecycle()
-    val searchHistory by searchViewModel.getLatestSearches(5).collectAsStateWithLifecycle(initialValue = emptySet())
+    val searchHistory by searchViewModel.getLatestSearches(5)
+        .collectAsStateWithLifecycle(initialValue = emptySet())
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -155,13 +159,20 @@ fun SearchScreen(
                     trailingIcon = {
                         if (searchText.isNotEmpty()) {
                             IconButton(onClick = { searchText = "" }) {
-                                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.search_clear))
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = stringResource(R.string.search_clear)
+                                )
                             }
                         }
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(onSearch = {
-                        searchViewModel.searchNow(searchText, selectedFilter.value, selectedEbookFilter.value)
+                        searchViewModel.searchNow(
+                            searchText,
+                            selectedFilter.value,
+                            selectedEbookFilter.value
+                        )
                         keyboardController?.hide()
                     }),
                     modifier = Modifier.weight(1f),
@@ -169,14 +180,20 @@ fun SearchScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(onClick = { showBottomSheet = true }) {
-                    Icon(Icons.Filled.Tune, contentDescription = stringResource(R.string.search_filter_button))
+                    Icon(
+                        Icons.Filled.Tune,
+                        contentDescription = stringResource(R.string.search_filter_button)
+                    )
                 }
             }
 
             if (showBottomSheet) {
                 ModalBottomSheet(onDismissRequest = { showBottomSheet = false }) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(stringResource(R.string.search_filter_by_print_type), style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            stringResource(R.string.search_filter_by_print_type),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(filterOptions) { filter ->
@@ -184,14 +201,21 @@ fun SearchScreen(
                                     selected = filter == selectedFilter,
                                     onClick = {
                                         selectedFilter = filter
-                                        searchViewModel.search(searchText, selectedFilter.value, selectedEbookFilter.value)
+                                        searchViewModel.search(
+                                            searchText,
+                                            selectedFilter.value,
+                                            selectedEbookFilter.value
+                                        )
                                     },
                                     label = { Text(filter.label) }
                                 )
                             }
                         }
                         Spacer(modifier = Modifier.height(24.dp))
-                        Text(stringResource(R.string.search_filter_by_ebook_type), style = MaterialTheme.typography.headlineSmall)
+                        Text(
+                            stringResource(R.string.search_filter_by_ebook_type),
+                            style = MaterialTheme.typography.headlineSmall
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             items(ebookFilterOptions) { filter ->
@@ -199,7 +223,11 @@ fun SearchScreen(
                                     selected = filter == selectedEbookFilter,
                                     onClick = {
                                         selectedEbookFilter = filter
-                                        searchViewModel.search(searchText, selectedFilter.value, selectedEbookFilter.value)
+                                        searchViewModel.search(
+                                            searchText,
+                                            selectedFilter.value,
+                                            selectedEbookFilter.value
+                                        )
                                     },
                                     label = { Text(filter.label) }
                                 )
@@ -219,7 +247,10 @@ fun SearchScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Filled.History, contentDescription = stringResource(R.string.search_recent_searches))
+                            Icon(
+                                Icons.Filled.History,
+                                contentDescription = stringResource(R.string.search_recent_searches)
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.search_recent_searches),
@@ -238,7 +269,11 @@ fun SearchScreen(
                                     .fillMaxWidth()
                                     .clickable {
                                         searchText = search
-                                        searchViewModel.searchNow(search, selectedFilter.value, selectedEbookFilter.value)
+                                        searchViewModel.searchNow(
+                                            search,
+                                            selectedFilter.value,
+                                            selectedEbookFilter.value
+                                        )
                                     }
                                     .padding(vertical = 12.dp),
                                 verticalAlignment = Alignment.CenterVertically
@@ -271,7 +306,11 @@ fun SearchScreen(
                             modifier = Modifier.padding(bottom = 4.dp),
                             onClick = {
                                 searchText = term
-                                searchViewModel.searchNow(term, selectedFilter.value, selectedEbookFilter.value)
+                                searchViewModel.searchNow(
+                                    term,
+                                    selectedFilter.value,
+                                    selectedEbookFilter.value
+                                )
                             },
                             label = { Text(term) },
                             selected = false,
@@ -282,13 +321,20 @@ fun SearchScreen(
             } else {
                 when (val state = uiState) {
                     is UiState.Loading -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             CircularProgressIndicator()
                         }
                     }
+
                     is UiState.Success -> {
                         if (state.data.isEmpty()) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Text("No results found.")
                             }
                         } else {
@@ -309,25 +355,45 @@ fun SearchScreen(
                                                         item = book,
                                                         isFavorite = true,
                                                         onSuccess = { message ->
-                                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(
+                                                                context,
+                                                                message,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                         },
                                                         onError = { error ->
                                                             favoriteBooks[bookId] = false
-                                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(
+                                                                context,
+                                                                error,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                         }
                                                     )
-                                                } ?: Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                                } ?: Toast.makeText(
+                                                    context,
+                                                    "Book ID is missing",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         },
                                         onCardClick = {
-                                            navController.currentBackStackEntry?.savedStateHandle?.set("book", book)
+                                            navController.currentBackStackEntry?.savedStateHandle?.set(
+                                                "book",
+                                                book
+                                            )
                                             navController.navigate(Screen.BookDetailsScreenRoute.route)
                                         }
                                     )
                                 }
                                 item {
                                     if (state.data.isNotEmpty()) {
-                                        Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
                                             CircularProgressIndicator()
                                         }
                                     }
@@ -343,11 +409,16 @@ fun SearchScreen(
                             }
                         }
                     }
+
                     is UiState.Error -> {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(state.message)
                         }
                     }
+
                     is UiState.Idle -> {}
                 }
             }

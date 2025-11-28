@@ -8,7 +8,7 @@ import com.depi.bookdiscovery.database.entities.ReadingStatus
 import com.depi.bookdiscovery.database.entities.UserBook
 import com.depi.bookdiscovery.database.repository.LocalBookRepository
 import com.depi.bookdiscovery.database.repository.Result
-import com.depi.bookdiscovery.ui.viewmodel.UiState
+import com.depi.bookdiscovery.util.UiState
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -52,6 +52,7 @@ class UserBooksViewModel(
                     is Result.Error -> {
                         _errorMessage.value = result.message ?: "Failed to get favorites count"
                     }
+
                     else -> {}
                 }
             }
@@ -77,10 +78,12 @@ class UserBooksViewModel(
                     is Result.Success -> {
                         filterAndUpdateBooks(result.data)
                     }
+
                     is Result.Error -> {
                         _uiState.value = UiState.Error(result.message ?: "Failed to load books")
                         _errorMessage.value = result.message
                     }
+
                     Result.Loading -> {
                         _uiState.value = UiState.Loading
                     }
@@ -96,7 +99,7 @@ class UserBooksViewModel(
         } else {
             books.filter { book ->
                 book.title.contains(query, ignoreCase = true) ||
-                book.authors.contains(query, ignoreCase = true)
+                        book.authors.contains(query, ignoreCase = true)
             }
         }
         _uiState.value = UiState.Success(filteredList)
@@ -106,16 +109,18 @@ class UserBooksViewModel(
         viewModelScope.launch {
             val newFavoriteStatus = !book.isFavorite
             val result = repository.toggleFavorite(book.id, newFavoriteStatus)
-            
+
             when (result) {
                 is Result.Success -> {
                     if (!result.data) {
                         _errorMessage.value = "Book not found in library"
                     }
                 }
+
                 is Result.Error -> {
                     _errorMessage.value = result.message ?: "Failed to update favorite status"
                 }
+
                 else -> {}
             }
         }
@@ -155,9 +160,11 @@ class UserBooksViewModel(
                         _errorMessage.value = "Failed to delete book"
                     }
                 }
+
                 is Result.Error -> {
                     _errorMessage.value = result.message ?: "Failed to delete book"
                 }
+
                 else -> {}
             }
         }
@@ -172,9 +179,11 @@ class UserBooksViewModel(
                         _errorMessage.value = "Failed to update reading status"
                     }
                 }
+
                 is Result.Error -> {
                     _errorMessage.value = result.message ?: "Failed to update reading status"
                 }
+
                 else -> {}
             }
         }
