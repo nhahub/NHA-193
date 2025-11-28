@@ -1,15 +1,16 @@
 package com.depi.bookdiscovery.util
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.stringSetPreferencesKey
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -54,7 +55,7 @@ class SettingsDataStore(context: Context) {
             newHistory.add(query)
             newHistory.addAll(currentHistory.filter { it != query })
             if (newHistory.size > 5) {
-                newHistory.removeLast()
+                newHistory.removeAt(newHistory.lastIndex)
             }
             preferences[SEARCH_HISTORY] = newHistory.toSet()
         }

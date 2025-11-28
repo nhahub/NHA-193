@@ -1,6 +1,3 @@
-
-
-
 package com.depi.bookdiscovery.ui.theme
 
 import androidx.compose.ui.graphics.Color
@@ -12,7 +9,7 @@ val LightCard = Color(0xFFFFFBFE)
 val LightCardForeground = Color(0xFF1C1B1F)
 val LightPopover = Color(0xFFFFFBFE)
 val LightPopoverForeground = Color(0xFF1C1B1F)
-val LightPrimary = Color(0xFF6750A4)
+val LightPrimary = Color(0xFFB39DDB)
 val LightPrimaryForeground = Color(0xFFFFFFFF)
 val LightSecondary = Color(0xFF625B71)
 val LightSecondaryForeground = Color(0xFFFFFFFF)
