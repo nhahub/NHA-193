@@ -1,13 +1,16 @@
-package com.depi.bookdiscovery.ui.viewmodel
+package com.depi.bookdiscovery.presentation.screens.main
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.depi.bookdiscovery.dto.Item
-import com.depi.bookdiscovery.repo.RepoService
+import com.depi.bookdiscovery.data.model.dto.Item
+import com.depi.bookdiscovery.domain.repo.RepoService
+import com.depi.bookdiscovery.util.UiState
 import com.depi.bookdiscovery.util.NetworkUtils
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

@@ -31,13 +31,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.depi.bookdiscovery.Screen
+import com.depi.bookdiscovery.data.model.dto.ImageLinks
+import com.depi.bookdiscovery.data.model.dto.Item
+import com.depi.bookdiscovery.data.model.dto.VolumeInfo
 import com.depi.bookdiscovery.database.BookDiscoveryDatabase
 import com.depi.bookdiscovery.database.entities.UserBook
-import com.depi.bookdiscovery.dto.Item
-import com.depi.bookdiscovery.dto.VolumeInfo
-import com.depi.bookdiscovery.dto.ImageLinks
-import com.depi.bookdiscovery.ui.viewmodel.UiState
+import com.depi.bookdiscovery.presentation.Screen
+import com.depi.bookdiscovery.screens.userbooks.UserBooksViewModel
+import com.depi.bookdiscovery.screens.userbooks.UserBooksViewModelFactory
+import com.depi.bookdiscovery.util.UiState
 
 // 3. Screen
 @OptIn(ExperimentalMaterial3Api::class)

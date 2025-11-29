@@ -1,4 +1,4 @@
-package com.depi.bookdiscovery.screens.details
+package com.depi.bookdiscovery.presentation.screens.details
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -34,7 +34,9 @@ import coil.request.ImageRequest
 import com.depi.bookdiscovery.R
 import com.depi.bookdiscovery.database.BookDiscoveryDatabase
 import com.depi.bookdiscovery.database.entities.ReadingStatus
-import com.depi.bookdiscovery.dto.Item
+import com.depi.bookdiscovery.data.model.dto.Item
+import com.depi.bookdiscovery.screens.details.BookDetailsViewModel
+import com.depi.bookdiscovery.screens.details.BookDetailsViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,13 +130,13 @@ fun BookDetailsScreen(navController: NavController) {
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
             ) {
                 Box {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:"))
-                                .crossfade(true)
-                                .build(),
-                            placeholder = painterResource(R.drawable.ic_my_books),
-                            error = painterResource(R.drawable.ic_my_books),
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(volumeInfo.imageLinks?.thumbnail?.replace("http:", "https:"))
+                            .crossfade(true)
+                            .build(),
+                        placeholder = painterResource(R.drawable.ic_my_books),
+                        error = painterResource(R.drawable.ic_my_books),
                         contentDescription = volumeInfo.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
@@ -267,27 +269,27 @@ fun BookDetailsScreen(navController: NavController) {
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-                
-                    // Add "Remove from Library" option if book is in library
-                    if (isInLibrary) {
-                        TextButton(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                viewModel.removeFromLibrary()
-                                showBottomSheet = false
-                            },
-                            colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            )
-                        ) {
-                            Text(
-                                "Remove from Library",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                // Add "Remove from Library" option if book is in library
+                if (isInLibrary) {
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = {
+                            viewModel.removeFromLibrary()
+                            showBottomSheet = false
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text(
+                            "Remove from Library",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
                     }
-                
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                }
+
                 val statuses = listOf(
                     ReadingStatus.WANT_TO_READ to "Want to Read",
                     ReadingStatus.CURRENTLY_READING to "Currently Reading",

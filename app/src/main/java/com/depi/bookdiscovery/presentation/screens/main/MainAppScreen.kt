@@ -1,4 +1,4 @@
-package com.depi.bookdiscovery.screens.main
+package com.depi.bookdiscovery.presentation.screens.main
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,24 +32,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.depi.bookdiscovery.R
-import com.depi.bookdiscovery.Screen
-import com.depi.bookdiscovery.repo.Repo
-import com.depi.bookdiscovery.screens.category.CategoriesScreen
-import com.depi.bookdiscovery.screens.profile.ProfileScreen
-import com.depi.bookdiscovery.screens.search.SearchScreen
-import com.depi.bookdiscovery.screens.userbooks.UserBooksScreen
-import com.depi.bookdiscovery.ui.viewmodel.MainViewModel
-import com.depi.bookdiscovery.ui.viewmodel.MainViewModelFactory
-import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModel
-import com.depi.bookdiscovery.ui.viewmodel.SettingsViewModelFactory
+import com.depi.bookdiscovery.presentation.Screen
+import com.depi.bookdiscovery.presentation.screens.search.SearchViewModel
+import com.depi.bookdiscovery.presentation.screens.search.SearchViewModelFactory
+import com.depi.bookdiscovery.presentation.screens.category.CategoriesScreen
+import com.depi.bookdiscovery.presentation.screens.profile.ProfileScreen
+import com.depi.bookdiscovery.presentation.screens.search.SearchScreen
+import com.depi.bookdiscovery.presentation.screens.userbooks.UserBooksScreen
+import com.depi.bookdiscovery.presentation.SettingsViewModel
+import com.depi.bookdiscovery.presentation.SettingsViewModelFactory
+import com.depi.bookdiscovery.data.repo.Repo
+import com.depi.bookdiscovery.util.SettingsDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainAppScreen(
-    settingsDataStore: com.depi.bookdiscovery.util.SettingsDataStore,
+    settingsDataStore: SettingsDataStore,
     mainNavController: NavController,
 ) {
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
     val settingsViewModel: SettingsViewModel = viewModel(
         factory = SettingsViewModelFactory(settingsDataStore)
     )
@@ -92,7 +94,7 @@ fun MainAppScreen(
                                 )
 
                                 Screen.Categories -> Icon(
-                                    imageVector = Icons.Default.GridOn,
+                                    painterResource(id = R.drawable.ic_categories),
                                     contentDescription = "Categories"
                                 )
 
@@ -142,9 +144,9 @@ fun MainAppScreen(
                 )
             }
             composable(Screen.SearchScreenRoute.route) {
-                val context = androidx.compose.ui.platform.LocalContext.current
-                val searchViewModel: com.depi.bookdiscovery.SearchViewModel = viewModel(
-                    factory = com.depi.bookdiscovery.SearchViewModelFactory(
+                val context = LocalContext.current
+                val searchViewModel: SearchViewModel = viewModel(
+                    factory = SearchViewModelFactory(
                         context,
                         settingsDataStore
                     )
