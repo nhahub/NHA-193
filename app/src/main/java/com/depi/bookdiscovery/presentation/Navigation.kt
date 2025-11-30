@@ -3,9 +3,9 @@ package com.depi.bookdiscovery.presentation
 import android.net.Uri
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,13 +27,15 @@ import com.depi.bookdiscovery.domain.usecase.LoginUseCase
 import com.depi.bookdiscovery.domain.usecase.LogoutUseCase
 import com.depi.bookdiscovery.domain.usecase.SendResetEmailUseCase
 import com.depi.bookdiscovery.domain.usecase.SignUpUseCase
+import com.depi.bookdiscovery.presentation.screens.auth.AuthViewModel
 import com.depi.bookdiscovery.presentation.screens.auth.AuthViewModelFactory
+import com.depi.bookdiscovery.presentation.screens.auth.LoginScreen
+import com.depi.bookdiscovery.presentation.screens.auth.SignUpScreen
 import com.depi.bookdiscovery.presentation.screens.category.CategoryBooksScreen
 import com.depi.bookdiscovery.presentation.screens.details.BookDetailsScreen
-import com.depi.bookdiscovery.presentation.screens.auth.LoginScreen
 import com.depi.bookdiscovery.presentation.screens.main.MainAppScreen
+import com.depi.bookdiscovery.presentation.screens.profile.ProfileScreen
 import com.depi.bookdiscovery.presentation.screens.search.SearchScreen
-import com.depi.bookdiscovery.presentation.screens.auth.SignUpScreen
 import com.depi.bookdiscovery.util.SettingsDataStore
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -75,7 +77,7 @@ fun AppNavigation(settingsDataStore: SettingsDataStore) {
     val signUpUseCase = remember { SignUpUseCase(authRepository) }
     val loginUseCase = remember { LoginUseCase(authRepository) }
     val googleLoginUseCase = remember { GoogleLoginUseCase(authRepository) }
-    val logoutUseCase = remember { LogoutUseCase(authRepository) }
+    val logoutUseCase = remember { LogoutUseCase(authRepository,userLocalDataSource) }
     val getCurrentUserUseCase = remember { GetCurrentUserUseCase(authRepository) }
     val sendResetEmailUseCase = remember { SendResetEmailUseCase(authRepository) }
 
@@ -89,23 +91,27 @@ fun AppNavigation(settingsDataStore: SettingsDataStore) {
             sendResetEmailUseCase
         )
     }
-    //We haven't finish reading yet
+
+
     val isLoggedIn by userPreferences.isUserLoggedInFlow.collectAsState(initial = null)
-    //show loading screen
-    if (isLoggedIn == null) {
+
+    val startRoute = remember(isLoggedIn) {
+        when (isLoggedIn) {
+            true -> Screen.Main.route
+            false -> Screen.Login.route
+            null -> null
+        }
+    }
+
+    if (startRoute == null) {
         CircularProgressIndicator()
         return
     }
-    //finally, we know where we are going
-    val startDestination = if (isLoggedIn == true) {
-        Screen.Main.route
-    } else {
-        Screen.Login.route
-    }
+
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startRoute
     ) {
         composable(Screen.Login.route) {
             LoginScreen(
@@ -120,7 +126,10 @@ fun AppNavigation(settingsDataStore: SettingsDataStore) {
                 )
         }
         composable(Screen.Main.route) {
-            MainAppScreen(settingsDataStore, navController)
+            val authViewModel: AuthViewModel = viewModel(
+                factory = authFactory
+            )
+            MainAppScreen(settingsDataStore, navController,authViewModel)
         }
         composable(Screen.SearchScreenRoute.route) {
             SearchScreen(navController, searchViewModel)

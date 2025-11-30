@@ -42,6 +42,7 @@ import com.depi.bookdiscovery.presentation.screens.userbooks.UserBooksScreen
 import com.depi.bookdiscovery.presentation.SettingsViewModel
 import com.depi.bookdiscovery.presentation.SettingsViewModelFactory
 import com.depi.bookdiscovery.data.repo.Repo
+import com.depi.bookdiscovery.presentation.screens.auth.AuthViewModel
 import com.depi.bookdiscovery.util.SettingsDataStore
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,6 +50,7 @@ import com.depi.bookdiscovery.util.SettingsDataStore
 fun MainAppScreen(
     settingsDataStore: SettingsDataStore,
     mainNavController: NavController,
+    authViewModel: AuthViewModel
 ) {
     val context = LocalContext.current
     val settingsViewModel: SettingsViewModel = viewModel(
@@ -163,7 +165,8 @@ fun MainAppScreen(
                 ProfileScreen(
                     navController = navController,
                     settingsViewModel = settingsViewModel,
-                    appNavController = mainNavController
+                    appNavController = mainNavController,
+                    authViewModel = authViewModel
                 )
             }
         }

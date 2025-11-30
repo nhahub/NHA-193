@@ -1,5 +1,10 @@
 package com.depi.bookdiscovery.presentation.screens.auth
 
+
+/**
+ * Data class representing the mutable state of the authentication form (Login or SignUp).
+ * It holds the current form data, loading status, success state, and any validation/general error messages.
+ */
 sealed class AuthFormEvent {
     data class EmailChanged(val value: String) : AuthFormEvent()
     data class PasswordChanged(val value: String) : AuthFormEvent()

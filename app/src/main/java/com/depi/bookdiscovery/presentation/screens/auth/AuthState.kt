@@ -1,6 +1,10 @@
 package com.depi.bookdiscovery.presentation.screens.auth
 
-
+/**
+ * [AuthFormState]
+ * Data class representing the mutable state of the authentication forms (Login/SignUp).
+ * It holds all input values, validation errors, and operational states.
+ */
 data class AuthFormState(
     val email: String = "",
     val password: String = "",
@@ -20,6 +24,11 @@ data class AuthFormState(
     val termsError: Boolean = false
 )
 
+/**
+ * [SessionState]
+ * Data class representing the overall session status of the application.
+ * This is typically observed to determine navigation between Auth screens and Main screens.
+ */
 data class SessionState(
     val isAuthenticated: Boolean = false,
     val currentUserId: String? = null,
