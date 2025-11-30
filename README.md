@@ -10,6 +10,10 @@ For a detailed overview of the project, including its features, architecture, an
 
 ## Screen Documentations
 The following documents provide detailed explanations of individual screens within the application, covering their UI components, user actions, and state management.
+- [Login_Screen](./app/src/main/java/com/depi/bookdiscovery/presentation/screens/auth/login.md)
+- [Signup_Screen](./app/src/main/java/com/depi/bookdiscovery/presentation/screens/auth/signup.md)
 - [Search Screen](./app/src/main/java/com/depi/bookdiscovery/presentation/screens/search/search.md)
 - [Category Screen](./app/src/main/java/com/depi/bookdiscovery/presentation/screens/category/category.md)
 - [Category Books Screen](./app/src/main/java/com/depi/bookdiscovery/presentation/screens/category/category_books.md)
+- [Profile_Screen](./app/src/main/java/com/depi/bookdiscovery/presentation/screens/profile/profile.md)
+
