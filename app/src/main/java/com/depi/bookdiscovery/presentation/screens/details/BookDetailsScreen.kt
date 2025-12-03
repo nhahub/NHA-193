@@ -1,7 +1,5 @@
 package com.depi.bookdiscovery.presentation.screens.details
 
-import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -36,8 +34,6 @@ import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
 import com.depi.bookdiscovery.database.BookDiscoveryDatabase
 import com.depi.bookdiscovery.database.entities.ReadingStatus
 import com.depi.bookdiscovery.data.model.dto.Item
-import com.depi.bookdiscovery.screens.details.BookDetailsViewModel
-import com.depi.bookdiscovery.screens.details.BookDetailsViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

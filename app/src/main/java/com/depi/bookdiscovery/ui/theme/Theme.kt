@@ -58,11 +58,13 @@ private val LightColorScheme = lightColorScheme(
     outline = LightOutline,
     outlineVariant = LightOutlineVariant,
     scrim = LightScrim,
+
 )
 
 @Composable
 fun BookDiscoveryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -82,4 +84,6 @@ fun BookDiscoveryTheme(
         typography = Typography,
         content = content
     )
+
+
 }

@@ -1,4 +1,4 @@
-package com.depi.bookdiscovery.screens.details
+package com.depi.bookdiscovery.presentation.screens.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

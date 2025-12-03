@@ -46,6 +46,7 @@ import com.depi.bookdiscovery.presentation.components.profile.ReadingGoalData
 import com.depi.bookdiscovery.presentation.components.profile.ReadingStats
 import com.depi.bookdiscovery.presentation.components.profile.ReadingStatsData
 import com.depi.bookdiscovery.presentation.components.profile.RecentActivityItem
+import com.depi.bookdiscovery.presentation.screens.auth.AuthViewModel
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -56,7 +57,8 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     settingsViewModel: SettingsViewModel,
     navController: NavController,
-    appNavController: NavController
+    appNavController: NavController,
+    authViewModel: AuthViewModel
 ) {
 
     val isDarkMode by settingsViewModel.darkMode.collectAsState()
@@ -211,7 +213,7 @@ fun ProfileScreen(
                         showLogoutDialog = false
                         coroutineScope.launch {
                             try {
-                                userPrefs.clearUser()
+                                authViewModel.logout()
 
                                 appNavController.navigate("login") {
                                     popUpTo(0) { inclusive = true }

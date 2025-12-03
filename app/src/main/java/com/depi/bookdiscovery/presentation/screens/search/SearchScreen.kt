@@ -37,8 +37,6 @@ import androidx.navigation.compose.rememberNavController
 import com.depi.bookdiscovery.R
 import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
 import com.depi.bookdiscovery.presentation.Screen
-import com.depi.bookdiscovery.presentation.screens.search.SearchViewModel
-import com.depi.bookdiscovery.presentation.screens.search.SearchViewModelFactory
 import com.depi.bookdiscovery.presentation.components.BookCard
 import com.depi.bookdiscovery.data.model.dto.FilterOption
 import com.depi.bookdiscovery.data.model.dto.Item

@@ -10,16 +10,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-//data class AuthUiState(
-//    val isAuthenticated: Boolean = false,
-//    val currentUserId: String? = null,
-//    val isLoading: Boolean = true ,
-//    val currentUserName: String? = null,
-//    val currentUserEmail: String? = null,
-//
-//    val error: String? = null,
-//    val isLoggedOut: Boolean = false
-//)
+/**
+ * ViewModel responsible for managing the user session state.
+ * It tracks whether the user is currently authenticated and provides logic for checking the user
+ * and logging out.
+ *
+ * @param getCurrentUserUseCase Use case for fetching the current logged-in user details.
+ * @param logoutUseCase Use case for executing the user logout operation.
+ */
+
 class AuthViewModel(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val logoutUseCase: LogoutUseCase
@@ -32,6 +31,10 @@ class AuthViewModel(
         checkCurrentUser()
     }
 
+    /**
+     * Checks if a user is currently logged in.
+     * Updates the [SessionState] with user information or the unauthenticated status.
+     */
     fun checkCurrentUser() {
         viewModelScope.launch {
             val user = getCurrentUserUseCase()
@@ -45,9 +48,13 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Executes the logout operation and resets the session state.
+     */
     fun logout() {
         viewModelScope.launch {
             logoutUseCase()
+
             _state.value = SessionState(isAuthenticated = false, isLoading = false)
         }
     }

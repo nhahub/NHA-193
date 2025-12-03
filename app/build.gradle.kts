@@ -4,11 +4,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.parcelable)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)
 }
-
 val localProp = Properties()
 val localPropFile = rootProject.file("local.properties")
 if(localPropFile.exists()){
@@ -26,8 +25,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
         buildConfigField("String","MY_CLIENT_ID",localProp.getProperty("FIREBASE_CLIENT_ID"))
+
     }
 
     buildTypes {
@@ -62,24 +61,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    testImplementation(libs.junit)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.googleid)
-    implementation(libs.play.services.auth)
     implementation(libs.gson)
-    implementation(libs.gson.converter)
     implementation(libs.retrofit)
-    implementation(libs.kotlinx.coroutines.play.services)
-    implementation(libs.credentials)
+    implementation(libs.gson.converter)
     implementation(libs.material.icons)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.androidx.navigation.compose)
@@ -90,13 +74,16 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.splashscreen)
     implementation(libs.shimmer)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.googleid)
+    implementation(libs.play.services.auth)
+    testImplementation(libs.junit)
 
     // Room dependencies
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-    testImplementation(libs.junit)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -104,4 +91,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(kotlin("test"))
 }
