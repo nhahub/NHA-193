@@ -31,7 +31,7 @@ import com.depi.bookdiscovery.presentation.Screen
 data class Category(
     val id: String,
     val name: Int,
-    val icon: ImageVector
+    val icon: ImageVector,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,15 +94,22 @@ fun CategoriesScreen(navController: NavController) {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            val filteredCategories = categories.filter {
-                stringResource(it.name).contains(searchQuery, ignoreCase = true)
-            }
+            // 1. Resolve the string names here, inside the Composable
+            val categoriesWithNames = categories.map { it to stringResource(it.name) }
+            
+            // 2. Pass the list with resolved names to the pure filter function
+            val filteredCategories = filterCategoriesByName(categoriesWithNames, searchQuery)
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(filteredCategories) { category ->
-                    val categoryName = stringResource(category.name)
-                    CategoryRow(category = category, onClick = {
-                        navController.navigate(Screen.CategoryBooksScreenRoute.createRoute(category.id, categoryName))
+                // 3. Iterate over the filtered list of pairs
+                items(filteredCategories) { (category, categoryName) ->
+                    CategoryRow(category = category, categoryName = categoryName, onClick = {
+                        navController.navigate(
+                            Screen.CategoryBooksScreenRoute.createRoute(
+                                category.id,
+                                categoryName
+                            )
+                        )
                     })
                 }
             }
@@ -111,7 +118,8 @@ fun CategoriesScreen(navController: NavController) {
 }
 
 @Composable
-fun CategoryRow(category: Category, onClick: () -> Unit) {
+// 4. Update CategoryRow to accept the already-resolved category name
+fun CategoryRow(category: Category, categoryName: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,7 +139,7 @@ fun CategoryRow(category: Category, onClick: () -> Unit) {
                 tint = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = stringResource(category.name),
+                text = categoryName, // Use the resolved name directly
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f)
             )

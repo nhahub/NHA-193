@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.depi.bookdiscovery.R
+import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
 import com.depi.bookdiscovery.database.BookDiscoveryDatabase
 import com.depi.bookdiscovery.database.entities.ReadingStatus
 import com.depi.bookdiscovery.data.model.dto.Item
@@ -58,6 +59,18 @@ fun BookDetailsScreen(navController: NavController) {
     val successMessage by viewModel.successMessage.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }
+    var showUnfavoriteDialog by remember { mutableStateOf(false) }
+
+    ConfirmUnfavoriteDialog(
+        showDialog = showUnfavoriteDialog,
+        bookTitle = bookItem?.volumeInfo?.title ?: "this book",
+        onConfirm = {
+            viewModel.toggleFavorite()
+            showUnfavoriteDialog = false
+        },
+        onDismiss = { showUnfavoriteDialog = false }
+    )
+
 
     // Show error snackbar
     LaunchedEffect(errorMessage) {
@@ -148,7 +161,13 @@ fun BookDetailsScreen(navController: NavController) {
                             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
                             .align(Alignment.TopEnd)
                     ) {
-                        IconButton(onClick = { viewModel.toggleFavorite() }) {
+                        IconButton(onClick = {
+                            if (isFavorite) {
+                                showUnfavoriteDialog = true
+                            } else {
+                                viewModel.toggleFavorite()
+                            }
+                        }) {
                             Icon(
                                 imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                                 contentDescription = "Favorite",

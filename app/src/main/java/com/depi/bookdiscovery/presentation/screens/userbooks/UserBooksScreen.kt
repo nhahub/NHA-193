@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
 import com.depi.bookdiscovery.data.model.dto.ImageLinks
 import com.depi.bookdiscovery.data.model.dto.Item
 import com.depi.bookdiscovery.data.model.dto.VolumeInfo
@@ -58,6 +59,21 @@ fun UserBooksScreen(
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
     val favCount by viewModel.favoritesCount.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
+
+    var showUnfavoriteDialog by remember { mutableStateOf(false) }
+    var bookToUnfavorite by remember { mutableStateOf<UserBook?>(null) }
+
+    ConfirmUnfavoriteDialog(
+        showDialog = showUnfavoriteDialog,
+        bookTitle = bookToUnfavorite?.title ?: "this book",
+        onConfirm = {
+            bookToUnfavorite?.let { book ->
+                viewModel.toggleFavorite(book)
+            }
+            showUnfavoriteDialog = false
+        },
+        onDismiss = { showUnfavoriteDialog = false }
+    )
 
     // Show error snackbar
     val snackbarHostState = remember { SnackbarHostState() }
@@ -135,7 +151,14 @@ fun UserBooksScreen(
                                 )
                                 navController.navigate(Screen.BookDetailsScreenRoute.route)
                             },
-                            onFavClick = { book -> viewModel.toggleFavorite(book) }
+                            onFavClick = { book ->
+                                if (book.isFavorite) {
+                                    bookToUnfavorite = book
+                                    showUnfavoriteDialog = true
+                                } else {
+                                    viewModel.toggleFavorite(book)
+                                }
+                            }
                         )
                     }
                 }

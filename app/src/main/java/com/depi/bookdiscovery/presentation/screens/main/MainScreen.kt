@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.rememberAsyncImagePainter
 import com.depi.bookdiscovery.R
+import com.depi.bookdiscovery.components.ConfirmUnfavoriteDialog
 import com.depi.bookdiscovery.data.model.dto.Item
 import com.depi.bookdiscovery.presentation.Screen
 import com.depi.bookdiscovery.util.UiState
@@ -65,6 +66,33 @@ fun MainScreen(
     val context = LocalContext.current
     val databaseHelper = remember { DatabaseHelper(context) }
     val favoriteBooks = remember { mutableStateMapOf<String, Boolean>() }
+    var showUnfavoriteDialog by remember { mutableStateOf(false) }
+    var bookToUnfavorite by remember { mutableStateOf<Book?>(null) }
+
+    ConfirmUnfavoriteDialog(
+        showDialog = showUnfavoriteDialog,
+        bookTitle = bookToUnfavorite?.title ?: "this book",
+        onConfirm = {
+            bookToUnfavorite?.let { book ->
+                if (book.id.isNotEmpty()) {
+                    favoriteBooks[book.id] = false
+                    databaseHelper.toggleFavoriteWithItem(
+                        item = book.fullItem,
+                        isFavorite = false,
+                        onSuccess = { message ->
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        },
+                        onError = { error ->
+                            favoriteBooks[book.id] = true // Revert on error
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
+            }
+            showUnfavoriteDialog = false
+        },
+        onDismiss = { showUnfavoriteDialog = false }
+    )
 
     val categories = remember {
         listOf(
@@ -208,22 +236,26 @@ fun MainScreen(
                         book = book,
                         isFavorite = isFavorite,
                         onFavoriteClick = {
-                            if (book.id.isNotEmpty()) {
-                                val newStatus = !isFavorite
-                                favoriteBooks[book.id] = newStatus
-                                databaseHelper.toggleFavoriteWithItem(
-                                    item = book.fullItem,
-                                    isFavorite = newStatus,
-                                    onSuccess = { message ->
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                    },
-                                    onError = { error ->
-                                        favoriteBooks[book.id] = isFavorite
-                                        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                                    }
-                                )
+                            if (isFavorite) {
+                                bookToUnfavorite = book
+                                showUnfavoriteDialog = true
                             } else {
-                                Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                if (book.id.isNotEmpty()) {
+                                    favoriteBooks[book.id] = true
+                                    databaseHelper.toggleFavoriteWithItem(
+                                        item = book.fullItem,
+                                        isFavorite = true,
+                                        onSuccess = { message ->
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        },
+                                        onError = { error ->
+                                            favoriteBooks[book.id] = false
+                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                } else {
+                                    Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         },
                         onClick = { onBookClick(book.fullItem) }
@@ -243,22 +275,26 @@ fun MainScreen(
                         book = book,
                         isFavorite = isFavorite,
                         onFavoriteClick = {
-                            if (book.id.isNotEmpty()) {
-                                val newStatus = !isFavorite
-                                favoriteBooks[book.id] = newStatus
-                                databaseHelper.toggleFavoriteWithItem(
-                                    item = book.fullItem,
-                                    isFavorite = newStatus,
-                                    onSuccess = { message ->
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                    },
-                                    onError = { error ->
-                                        favoriteBooks[book.id] = isFavorite
-                                        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                                    }
-                                )
+                           if (isFavorite) {
+                                bookToUnfavorite = book
+                                showUnfavoriteDialog = true
                             } else {
-                                Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                if (book.id.isNotEmpty()) {
+                                    favoriteBooks[book.id] = true
+                                    databaseHelper.toggleFavoriteWithItem(
+                                        item = book.fullItem,
+                                        isFavorite = true,
+                                        onSuccess = { message ->
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        },
+                                        onError = { error ->
+                                            favoriteBooks[book.id] = false
+                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                } else {
+                                    Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         },
                         onClick = { onBookClick(book.fullItem) }
@@ -278,22 +314,26 @@ fun MainScreen(
                         book = book,
                         isFavorite = isFavorite,
                         onFavoriteClick = {
-                            if (book.id.isNotEmpty()) {
-                                val newStatus = !isFavorite
-                                favoriteBooks[book.id] = newStatus
-                                databaseHelper.toggleFavoriteWithItem(
-                                    item = book.fullItem,
-                                    isFavorite = newStatus,
-                                    onSuccess = { message ->
-                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                    },
-                                    onError = { error ->
-                                        favoriteBooks[book.id] = isFavorite
-                                        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                                    }
-                                )
+                            if (isFavorite) {
+                                bookToUnfavorite = book
+                                showUnfavoriteDialog = true
                             } else {
-                                Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                if (book.id.isNotEmpty()) {
+                                    favoriteBooks[book.id] = true
+                                    databaseHelper.toggleFavoriteWithItem(
+                                        item = book.fullItem,
+                                        isFavorite = true,
+                                        onSuccess = { message ->
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        },
+                                        onError = { error ->
+                                            favoriteBooks[book.id] = false
+                                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                } else {
+                                    Toast.makeText(context, "Book ID is missing", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         },
                         onClick = { onBookClick(book.fullItem) }

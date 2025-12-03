@@ -3,22 +3,20 @@ package com.depi.bookdiscovery.presentation.screens.category
 /**
  * Filters a list of categories based on a search query.
  *
- * This is a pure function, making it easy to unit test without Android framework dependencies.
+ * This is a pure, top-level function, making it easy to unit test without Android framework dependencies.
  *
- * @param categories The original list of categories to filter.
+ * @param categoriesWithNames The original list of categories paired with their resolved string names.
  * @param searchQuery The text to search for within the category names.
- * @param nameResolver A lambda function that takes a category's resource ID and returns the resolved string name.
- * @return A new, filtered list of categories.
+ * @return A new, filtered list of categories with their resolved names.
  */
 fun filterCategoriesByName(
-    categories: List<Category>,
+    categoriesWithNames: List<Pair<Category, String>>,
     searchQuery: String,
-    nameResolver: (Int) -> String
-): List<Category> {
+): List<Pair<Category, String>> {
     if (searchQuery.isBlank()) {
-        return categories
+        return categoriesWithNames
     }
-    return categories.filter {
-        nameResolver(it.name).contains(searchQuery, ignoreCase = true)
+    return categoriesWithNames.filter { (_, categoryName) ->
+        categoryName.contains(searchQuery, ignoreCase = true)
     }
 }
